@@ -434,7 +434,7 @@ div.hint, div.important, aside.note, div.tip, aside.warning {
 
 aside.note, aside.warning {
   margin:1.5em 0px;
-  border: none;
+  border: 1px #000;
 }
 
 aside.note p.admonition-title,

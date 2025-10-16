@@ -9,7 +9,7 @@ System Overview
 ===============
 
 .. note::
-    Access to this system is only available through special projects with explicit approval from Chris Fuson. 
+    Access to this system is only available through special projects in NCCS and NCRC with explicit approval. 
     This cluster is not intended for general-use purposes.
 
 
@@ -41,15 +41,15 @@ Storage Areas Overview
 
 The Lustre filesystem is organized into the following storage areas for project-specific work:
 
-+---------------------+-----------------------------------------------------+------------------------+-------------+------------------+
-| Area                | Path                                                | Type                   | Permissions | On Compute Nodes |
-+=====================+=====================================================+========================+=============+==================+
-| Member Work         | ``/lustre/OLCFLustre/[projid]/scratch/[userid]``    | Lustre HPE ClusterStor | 700         | Yes              |
-+---------------------+-----------------------------------------------------+------------------------+-------------+------------------+
-| Project Work        | ``/lustre/OLCFLustre/[projid]/proj-shared``         | Lustre HPE ClusterStor | 770         | Yes              |
-+---------------------+-----------------------------------------------------+------------------------+-------------+------------------+
-| World Work          | ``/lustre/OLCFLustre/[projid]/world-shared``        | Lustre HPE ClusterStor | 775         | Yes              |
-+---------------------+-----------------------------------------------------+------------------------+-------------+------------------+
++---------------------+-----------------------------------------------------+---------+-------------+------------------+
+| Area                | Path                                                | Type    | Permissions | On Compute Nodes |
++=====================+=====================================================+=========+=============+==================+
+| Member Work         | ``/lustre/OLCFLustre/[projid]/scratch/[userid]``    | Lustre  | 700         | Yes              |
++---------------------+-----------------------------------------------------+---------+-------------+------------------+
+| Project Work        | ``/lustre/OLCFLustre/[projid]/proj-shared``         | Lustre  | 770         | Yes              |
++---------------------+-----------------------------------------------------+---------+-------------+------------------+
+| World Work          | ``/lustre/OLCFLustre/[projid]/world-shared``        | Lustre  | 775         | Yes              |
++---------------------+-----------------------------------------------------+---------+-------------+------------------+
 
 
 
