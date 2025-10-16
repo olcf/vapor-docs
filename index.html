@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="generator" content="Docutils 0.22.2: https://docutils.sourceforge.io/" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vapor</title>
+<style type="text/css">
+
+/*
+:Author: Chad Skeeters
+:Contact: goobsoft@gmail.com
+
+Stylesheet for use with Docutils/rst2html.
+*/
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+}
+
+a:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+nav.contents {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(20%, 20em);
+    height: 100vh;
+    margin: 0;
+    background-color: #fafaf6;
+    padding: 1em 2% 0 2%;
+    overflow: auto;
+}
+
+a:hover,
+a:active {
+  outline: 0;
+}
+
+sub,
+sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+img {
+  width: auto\9;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+
+@media print {
+  * {
+    color: #000 !important;
+    text-shadow: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+  .ir a:after,
+  a[href^="javascript:"]:after,
+  a[href^="#"]:after {
+    content: "";
+  }
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+  img {
+    max-width: 100% !important;
+  }
+  @page  {
+    margin: 0.5cm;
+  }
+  h1 {
+    page-break-before:always;
+  }
+  h1.title {
+    page-break-before:avoid;
+  }
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
+
+body {
+  margin: 40px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 900px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+a {
+  color: #0088cc;
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: #005580;
+  text-decoration: underline;
+}
+
+.img-rounded {
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+.img-polaroid {
+  padding: 4px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+small {
+  font-size: 85%;
+}
+
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
+}
+
+cite {
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 20px;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+h1 {
+  font-size: 2em;
+  padding-bottom:.2em;
+  border-bottom:1px solid grey;
+}
+h1.title {
+  padding-bottom:1em;
+  border-bottom:0px;
+}
+h2 {
+  font-size: 1.5em;
+      text-decoration: underline;
+}
+
+h3 {
+  font-size: 1.3em;
+  /*font-weight:normal;*/
+}
+
+h4 {
+  font-size: 1.3em;
+  font-style: italic;
+}
+
+h5 {
+  font-size: 1.2em;
+}
+
+h6 {
+  font-size: 1.1em;
+}
+
+ul,
+ol {
+  padding: 0;
+  margin: 0 0 10px 25px;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-bottom: 0;
+}
+
+li {
+  line-height: 20px;
+}
+
+dl {
+  margin-bottom: 20px;
+}
+
+dt,
+dd {
+  line-height: 20px;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin-left: 10px;
+}
+
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #ffffff;
+}
+
+abbr[title],
+abbr[data-original-title] {
+  cursor: help;
+  border-bottom: 1px dotted #999999;
+}
+
+abbr.initialism {
+  font-size: 90%;
+  text-transform: uppercase;
+}
+
+blockquote {
+  padding: 0 0 0 15px;
+  margin: 0 0 20px;
+  border-left: 5px solid #eeeeee;
+}
+
+blockquote p {
+  margin-bottom: 0;
+  font-size: 17.5px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+q:before,
+q:after,
+blockquote:before,
+blockquote:after {
+  content: "";
+}
+
+address {
+  display: block;
+  margin-bottom: 20px;
+  font-style: normal;
+  line-height: 20px;
+}
+
+code,
+pre {
+  padding: 0 3px 2px;
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+  color: #333333;
+  -webkit-border-radius: 3px;
+     -moz-border-radius: 3px;
+          border-radius: 3px;
+}
+
+code {
+  padding: 2px 4px;
+  color: #d14;
+  white-space: nowrap;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+}
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 20px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  white-space: pre-wrap;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+pre.prettyprint {
+  margin-bottom: 20px;
+}
+
+pre code {
+  padding: 0;
+  color: inherit;
+  white-space: pre;
+  white-space: pre-wrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.pre-scrollable {
+  max-height: 340px;
+  overflow-y: scroll;
+}
+
+table {
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid #000;
+  padding-left: 5px;
+
+}
+
+th {
+  font-weight: bold;
+}
+
+thead, th {
+  vertical-align: bottom;
+}
+
+
+ tbody {
+  border-top: 2px solid #dddddd;
+}
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.note, div.warning {
+  margin:1.5em 0px;
+  border: none;
+}
+
+div.note p.admonition-title,
+div.warning p.admonition-title
+{
+  display:none;
+}
+
+/* Clearfix
+ * http://css-tricks.com/snippets/css/clear-fix/
+ */
+
+div.note:after,
+div.warning:after {
+  content:"";
+  display:table;
+  clear:both;
+}
+
+div.note p:before,
+div.warning p:before {
+  display:block;
+  float:left;
+  font-size:4em;
+  line-height:1em;
+  margin-right:20px;
+  margin-left: 0em;
+  margin-top:-10px;
+  content:'\0270D'; /*handwriting*/
+}
+
+div.warning p:before {
+  content:'\026A0'; /*warning*/
+}
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+.code .pygments-hll { background-color: #ffffcc }
+.code .pygments-c { color: #60a0b0; font-style: italic } /* Comment */
+.code .pygments-err { border: 1px solid #FF0000 } /* Error */
+.code .pygments-k { color: #007020; font-weight: bold } /* Keyword */
+.code .pygments-o { color: #666666 } /* Operator */
+.code .pygments-cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
+.code .pygments-cp { color: #007020 } /* Comment.Preproc */
+.code .pygments-c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
+.code .pygments-cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
+.code .pygments-gd { color: #A00000 } /* Generic.Deleted */
+.code .pygments-ge { font-style: italic } /* Generic.Emph */
+.code .pygments-gr { color: #FF0000 } /* Generic.Error */
+.code .pygments-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code .pygments-gi { color: #00A000 } /* Generic.Inserted */
+.code .pygments-go { color: #888888 } /* Generic.Output */
+.code .pygments-gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
+.code .pygments-gs { font-weight: bold } /* Generic.Strong */
+.code .pygments-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code .pygments-gt { color: #0044DD } /* Generic.Traceback */
+.code .pygments-kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code .pygments-kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code .pygments-kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code .pygments-kp { color: #007020 } /* Keyword.Pseudo */
+.code .pygments-kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code .pygments-kt { color: #902000 } /* Keyword.Type */
+.code .pygments-m { color: #40a070 } /* Literal.Number */
+.code .pygments-s { color: #4070a0 } /* Literal.String */
+.code .pygments-na { color: #4070a0 } /* Name.Attribute */
+.code .pygments-nb { color: #007020 } /* Name.Builtin */
+.code .pygments-nc { color: #0e84b5; font-weight: bold } /* Name.Class */
+.code .pygments-no { color: #60add5 } /* Name.Constant */
+.code .pygments-nd { color: #555555; font-weight: bold } /* Name.Decorator */
+.code .pygments-ni { color: #d55537; font-weight: bold } /* Name.Entity */
+.code .pygments-ne { color: #007020 } /* Name.Exception */
+.code .pygments-nf { color: #06287e } /* Name.Function */
+.code .pygments-nl { color: #002070; font-weight: bold } /* Name.Label */
+.code .pygments-nn { color: #0e84b5; font-weight: bold } /* Name.Namespace */
+.code .pygments-nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code .pygments-nv { color: #bb60d5 } /* Name.Variable */
+.code .pygments-ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code .pygments-w { color: #bbbbbb } /* Text.Whitespace */
+.code .pygments-mf { color: #40a070 } /* Literal.Number.Float */
+.code .pygments-mh { color: #40a070 } /* Literal.Number.Hex */
+.code .pygments-mi { color: #40a070 } /* Literal.Number.Integer */
+.code .pygments-mo { color: #40a070 } /* Literal.Number.Oct */
+.code .pygments-sb { color: #4070a0 } /* Literal.String.Backtick */
+.code .pygments-sc { color: #4070a0 } /* Literal.String.Char */
+.code .pygments-sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
+.code .pygments-s2 { color: #4070a0 } /* Literal.String.Double */
+.code .pygments-se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
+.code .pygments-sh { color: #4070a0 } /* Literal.String.Heredoc */
+.code .pygments-si { color: #70a0d0; font-style: italic } /* Literal.String.Interpol */
+.code .pygments-sx { color: #c65d09 } /* Literal.String.Other */
+.code .pygments-sr { color: #235388 } /* Literal.String.Regex */
+.code .pygments-s1 { color: #4070a0 } /* Literal.String.Single */
+.code .pygments-ss { color: #517918 } /* Literal.String.Symbol */
+.code .pygments-bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code .pygments-vc { color: #bb60d5 } /* Name.Variable.Class */
+.code .pygments-vg { color: #bb60d5 } /* Name.Variable.Global */
+.code .pygments-vi { color: #bb60d5 } /* Name.Variable.Instance */
+.code .pygments-il { color: #40a070 } /* Literal.Number.Integer.Long */
+
+
+</style>
+</head>
+<body class="with-toc">
+<main id="vapor">
+<h1 class="title">Vapor</h1>
+
+<nav class="contents" id="contents" role="doc-toc">
+<p class="topic-title"><a class="reference internal" href="#top">Contents</a></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#system-overview" id="toc-entry-1">System Overview</a></p>
+<ul>
+<li><p><a class="reference internal" href="#file-systems" id="toc-entry-2">File Systems</a></p></li>
+<li><p><a class="reference internal" href="#storage-areas-overview" id="toc-entry-3">Storage Areas Overview</a></p></li>
+<li><p><a class="reference internal" href="#logging-in-to-vapor" id="toc-entry-4">Logging In to Vapor</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#programming-environment" id="toc-entry-5">Programming Environment</a></p>
+<ul>
+<li><p><a class="reference internal" href="#environment-modules-lmod" id="toc-entry-6">Environment Modules (Lmod)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#general-usage" id="toc-entry-7">General Usage</a></p></li>
+<li><p><a class="reference internal" href="#searching-for-modules" id="toc-entry-8">Searching for Modules</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#compilers" id="toc-entry-9">Compilers</a></p></li>
+<li><p><a class="reference internal" href="#mpi" id="toc-entry-10">MPI</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#running-jobs" id="toc-entry-11">Running Jobs</a></p>
+<ul>
+<li><p><a class="reference internal" href="#login-vs-compute-nodes" id="toc-entry-12">Login vs Compute Nodes</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#running-jobs-1" id="toc-entry-13">Running Jobs</a></p>
+<ul>
+<li><p><a class="reference internal" href="#login-vs-compute-nodes-1" id="toc-entry-14">Login vs Compute Nodes</a></p></li>
+<li><p><a class="reference internal" href="#slurm-workload-manager" id="toc-entry-15">Slurm Workload Manager</a></p>
+<ul>
+<li><p><a class="reference internal" href="#batch-scheduler-and-job-launcher" id="toc-entry-16">Batch Scheduler and Job Launcher</a></p>
+<ul>
+<li><p><a class="reference internal" href="#batch-scripts" id="toc-entry-17">Batch Scripts</a></p></li>
+<li><p><a class="reference internal" href="#interactive-jobs" id="toc-entry-18">Interactive Jobs</a></p></li>
+<li><p><a class="reference internal" href="#single-command-non-interactive" id="toc-entry-19">Single Command (non-interactive)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#common-slurm-submission-options" id="toc-entry-20">Common Slurm Submission Options</a></p></li>
+<li><p><a class="reference internal" href="#other-common-slurm-commands" id="toc-entry-21">Other Common Slurm Commands</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vapor-container-guide" id="toc-entry-22">Vapor container guide</a></p>
+<ul>
+<li><p><a class="reference internal" href="#building-and-running-simple-mpi-example" id="toc-entry-23">Building and running simple MPI example</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="system-overview">
+<h2><a class="toc-backref" href="#toc-entry-1" role="doc-backlink">System Overview</a></h2>
+<aside class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Access to this system is only available through special projects with explicit approval from Chris Fuson.
+This cluster is not intended for general-use purposes.</p>
+</aside>
+<p>Vapor is an Azure-based cluster provides experimental high-performance computing resources for the
+NCRC.</p>
+<p>The cluster is configured as follows:</p>
+<ul class="simple">
+<li><p><strong>Login Node:</strong> 1 node</p></li>
+<li><p><strong>Compute Nodes:</strong> 8 nodes</p></li>
+<li><p><strong>Interconnect:</strong> InfiniBand</p></li>
+<li><p><strong>Processor:</strong> AMD EPYC 7V73X 64-Core Processor</p></li>
+<li><p><strong>Cores per Node:</strong> 120 cores</p></li>
+<li><p><strong>GPUs:</strong> None</p></li>
+</ul>
+<section id="file-systems">
+<h3><a class="toc-backref" href="#toc-entry-2" role="doc-backlink">File Systems</a></h3>
+<p>The cluster offers two types of filesystems for storage and computation:</p>
+<ol class="arabic simple">
+<li><p><strong>NFS Home Directories:</strong>
+- Accessible at <span class="docutils literal"><span class="pre">/ccs/home/&lt;username&gt;</span></span></p></li>
+<li><p><strong>Lustre Filesystem:</strong>
+- A high-performance Lustre system with 1 TB total available storage, mounted at <span class="docutils literal">/lustre/OLCFLustre</span></p></li>
+</ol>
+</section>
+<section id="storage-areas-overview">
+<h3><a class="toc-backref" href="#toc-entry-3" role="doc-backlink">Storage Areas Overview</a></h3>
+<p>The Lustre filesystem is organized into the following storage areas for project-specific work:</p>
+<table>
+<thead>
+<tr><th class="head"><p>Area</p></th>
+<th class="head"><p>Path</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Permissions</p></th>
+<th class="head"><p>On Compute Nodes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p>Member Work</p></td>
+<td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/scratch/[userid]</span></span></p></td>
+<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>700</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr><td><p>Project Work</p></td>
+<td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/proj-shared</span></span></p></td>
+<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>770</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr><td><p>World Work</p></td>
+<td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/world-shared</span></span></p></td>
+<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>775</p></td>
+<td><p>Yes</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logging-in-to-vapor">
+<h3><a class="toc-backref" href="#toc-entry-4" role="doc-backlink">Logging In to Vapor</a></h3>
+<p>To log in to Vapor, use your OLCF username and passcode:</p>
+<p>First ssh to hub and from there ssh to the Vapor login node.</p>
+<pre class="code literal-block"><code>$ ssh &lt;username&gt;&#64;hub.ccs.ornl.gov
+$ ssh &lt;username&gt;&#64;login1.vapor.olcf.ornl.gov</code></pre>
+</section>
+</section>
+<section id="programming-environment">
+<h2><a class="toc-backref" href="#toc-entry-5" role="doc-backlink">Programming Environment</a></h2>
+<p>Frontier users are provided with many pre-installed software packages and scientific libraries. To facilitate this, environment management tools are used to handle necessary changes to the shell.</p>
+<section id="environment-modules-lmod">
+<h3><a class="toc-backref" href="#toc-entry-6" role="doc-backlink">Environment Modules (Lmod)</a></h3>
+<p>Environment modules are provided through <a class="reference external" href="https://lmod.readthedocs.io/en/latest/">Lmod</a>, a Lua-based module system for dynamically altering shell environments. By managing changes to the shell’s environment variables (such as <span class="docutils literal">PATH</span>, <span class="docutils literal">LD_LIBRARY_PATH</span>, and <span class="docutils literal">PKG_CONFIG_PATH</span>), Lmod allows you to alter the software available in your shell environment without the risk of creating package and version combinations that cannot coexist in a single environment.</p>
+<section id="general-usage">
+<h4><a class="toc-backref" href="#toc-entry-7" role="doc-backlink">General Usage</a></h4>
+<p>The interface to Lmod is provided by the <span class="docutils literal">module</span> command:</p>
+<table>
+<thead>
+<tr><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p><span class="docutils literal">module <span class="pre">-t</span> list</span></p></td>
+<td><p>Shows a terse list of the currently loaded modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module avail</span></p></td>
+<td><p>Shows a table of the currently available modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module help &lt;modulename&gt;</span></p></td>
+<td><p>Shows help information about <span class="docutils literal">&lt;modulename&gt;</span></p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module show &lt;modulename&gt;</span></p></td>
+<td><p>Shows the environment changes made by the <span class="docutils literal">&lt;modulename&gt;</span> modulefile</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module spider &lt;string&gt;</span></p></td>
+<td><p>Searches all possible modules according to <span class="docutils literal">&lt;string&gt;</span></p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module load &lt;modulename&gt; <span class="pre">[...]</span></span></p></td>
+<td><p>Loads the given <span class="docutils literal">&lt;modulename&gt;</span>(s) into the current environment</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module use &lt;path&gt;</span></p></td>
+<td><p>Adds <span class="docutils literal">&lt;path&gt;</span> to the modulefile search cache and <span class="docutils literal">MODULESPATH</span></p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module unuse &lt;path&gt;</span></p></td>
+<td><p>Removes <span class="docutils literal">&lt;path&gt;</span> from the modulefile search cache and <span class="docutils literal">MODULESPATH</span></p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module purge</span></p></td>
+<td><p>Unloads all modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module reset</span></p></td>
+<td><p>Resets loaded modules to system defaults</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module update</span></p></td>
+<td><p>Reloads all currently loaded modules</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="searching-for-modules">
+<h4><a class="toc-backref" href="#toc-entry-8" role="doc-backlink">Searching for Modules</a></h4>
+<p>Modules with dependencies are only available when the underlying dependencies, such as compiler families, are loaded. Thus, <span class="docutils literal">module avail</span> will only display modules that are compatible with the current state of the environment. To search the entire hierarchy across all possible dependencies, the <span class="docutils literal">spider</span> sub-command can be used as summarized in the following table.</p>
+<table>
+<thead>
+<tr><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p><span class="docutils literal">module spider</span></p></td>
+<td><p>Shows the entire possible graph of modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module spider &lt;modulename&gt;</span></p></td>
+<td><p>Searches for modules named <span class="docutils literal">&lt;modulename&gt;</span> in the graph of possible modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module spider <span class="pre">&lt;modulename&gt;/&lt;version&gt;</span></span></p></td>
+<td><p>Searches for a specific version of <span class="docutils literal">&lt;modulename&gt;</span> in the graph of possible modules</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">module spider &lt;string&gt;</span></p></td>
+<td><p>Searches for modulefiles containing <span class="docutils literal">&lt;string&gt;</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="compilers">
+<h3><a class="toc-backref" href="#toc-entry-9" role="doc-backlink">Compilers</a></h3>
+<p>AMD, GCC, Intel, and LLVM compilers are provided through modules. There is also the system version
+of GCC available in <span class="docutils literal">/usr/bin</span>. The below table lists details.</p>
+<table>
+<thead>
+<tr><th class="head"><p>Vendor</p></th>
+<th class="head"><p>Compiler</p></th>
+<th class="head"><p>Language</p></th>
+<th class="head"><p>Compiler</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td rowspan="3"><p>AMD</p></td>
+<td rowspan="3"><p>aocc</p></td>
+<td><p>C</p></td>
+<td><p><span class="docutils literal">clang</span></p></td>
+</tr>
+<tr><td><p>C++</p></td>
+<td><p><span class="docutils literal">clang++</span></p></td>
+</tr>
+<tr><td><p>Fortran</p></td>
+<td><p><span class="docutils literal">flang</span></p></td>
+</tr>
+<tr><td rowspan="3"><p>Intel</p></td>
+<td rowspan="3"><p>oneapi</p></td>
+<td><p>C</p></td>
+<td><p><span class="docutils literal">icx</span></p></td>
+</tr>
+<tr><td><p>C++</p></td>
+<td><p><span class="docutils literal">icpx</span></p></td>
+</tr>
+<tr><td><p>Fortran</p></td>
+<td><p><span class="docutils literal">ifx</span></p></td>
+</tr>
+<tr><td rowspan="3"><p>LLVM</p></td>
+<td rowspan="3"><p>llvm</p></td>
+<td><p>C</p></td>
+<td><p><span class="docutils literal">clang</span></p></td>
+</tr>
+<tr><td><p>C++</p></td>
+<td><p><span class="docutils literal">clang++</span></p></td>
+</tr>
+<tr><td><p>Fortran</p></td>
+<td><p><span class="docutils literal">flang</span></p></td>
+</tr>
+<tr><td rowspan="3"><p>GCC</p></td>
+<td rowspan="3"><p>gcc</p></td>
+<td><p>C</p></td>
+<td><p><span class="docutils literal">gcc</span></p></td>
+</tr>
+<tr><td><p>C++</p></td>
+<td><p><span class="docutils literal">g++</span></p></td>
+</tr>
+<tr><td><p>Fortran</p></td>
+<td><p><span class="docutils literal">gfortran</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mpi">
+<h3><a class="toc-backref" href="#toc-entry-10" role="doc-backlink">MPI</a></h3>
+<p>Both MPICH and OpenMPI modules are available. But MPICH is recommended and loaded by default. Use
+<span class="docutils literal">mpicc</span>, <span class="docutils literal">mpicxx</span>, <span class="docutils literal">mpifort</span> compiler wrappers for compiling for C, C++, Fortran with MPI. The
+compiler wrapper will use the compiler from the currently loaded compiler module.</p>
+</section>
+</section>
+<section id="running-jobs">
+<h2><a class="toc-backref" href="#toc-entry-11" role="doc-backlink">Running Jobs</a></h2>
+<p>Computational work on Vapor is performed by <em>jobs</em>. Jobs typically consist of several componenets:</p>
+<ul class="simple">
+<li><p>A batch submission script</p></li>
+<li><p>A binary executable</p></li>
+<li><p>A set of input files for the executable</p></li>
+<li><p>A set of output files created by the executable</p></li>
+</ul>
+<p>In general, the process for running a job is to:</p>
+<ol class="arabic simple">
+<li><p>Prepare executables and input files.</p></li>
+<li><p>Write a batch script.</p></li>
+<li><p>Submit the batch script to the batch scheduler.</p></li>
+<li><p>Optionally monitor the job before and during execution.</p></li>
+</ol>
+<p>The following sections describe in detail how to create, submit, and manage jobs for execution on Frontier. Frontier uses SchedMD's Slurm Workload Manager as the batch scheduling system.</p>
+<section id="login-vs-compute-nodes">
+<h3><a class="toc-backref" href="#toc-entry-12" role="doc-backlink">Login vs Compute Nodes</a></h3>
+<p>Recall from the System Overview that Frontier contains two node types: Login and Compute. When you connect to the system, you are placed on a <em>login</em> node. Login nodes are used for tasks such as code editing, compiling, etc. They are shared among all users of the system, so it is not appropriate to run tasks that are long/computationally intensive on login nodes. Users should also limit the number of simultaneous tasks on login nodes (e.g., concurrent tar commands, parallel make</p>
+<p>Compute nodes are the appropriate place for long-running, computationally-intensive tasks. When you start a batch job, your batch script (or interactive shell for batch-interactive jobs) runs on one of your allocated compute nodes.</p>
+</section>
+</section>
+<section id="running-jobs-1">
+<h2><a class="toc-backref" href="#toc-entry-13" role="doc-backlink">Running Jobs</a></h2>
+<p>This section describes how to run programs on the Vapor compute nodes,
+including a brief overview of Slurm and also how to map processes and threads
+to CPU cores and GPUs.</p>
+<section id="login-vs-compute-nodes-1">
+<h3><a class="toc-backref" href="#toc-entry-14" role="doc-backlink">Login vs Compute Nodes</a></h3>
+<p>Vapor contains two node types: Login and Compute. When you connect to the system, you are placed on a <em>login</em> node. Login nodes are used for tasks such as code editing, compiling, etc. They are shared among all users of the system, so it is not appropriate to run tasks that are long/computationally intensive on login nodes. Users should also limit the number of simultaneous tasks on login nodes (e.g., concurrent tar commands, parallel make</p>
+<p>Compute nodes are the appropriate place for long-running, computationally-intensive tasks. When you start a batch job, your batch script (or interactive shell for batch-interactive jobs) runs on one of your allocated compute nodes.</p>
+</section>
+<section id="slurm-workload-manager">
+<h3><a class="toc-backref" href="#toc-entry-15" role="doc-backlink">Slurm Workload Manager</a></h3>
+<p><a class="reference external" href="https://slurm.schedmd.com/">Slurm</a> is the workload manager used to interact
+with the compute nodes on Vapor. In the following subsections, the most
+commonly used Slurm commands for submitting, running, and monitoring jobs will
+be covered, but users are encouraged to visit the official documentation and
+man pages for more information.</p>
+<section id="batch-scheduler-and-job-launcher">
+<h4><a class="toc-backref" href="#toc-entry-16" role="doc-backlink">Batch Scheduler and Job Launcher</a></h4>
+<p>Slurm provides 3 ways of submitting and launching jobs on Vapor's compute
+nodes: batch  scripts, interactive, and single-command. The Slurm commands
+associated with these methods are shown in the table below and examples of
+their use can be found in the related subsections.</p>
+<table>
+<tbody>
+<tr><td><p><span class="docutils literal">sbatch</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to submit a batch script to allocate a Slurm job allocation. The script contains options preceded with <span class="docutils literal">#SBATCH</span>.</div>
+<div class="line">(see Batch Scripts section below)</div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">salloc</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to allocate an interactive Slurm job allocation, where one or more job steps (i.e., <span class="docutils literal">srun</span> commands) can then be launched on the allocated resources (i.e., nodes).</div>
+<div class="line">(see Interactive Jobs section below)</div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">srun</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to run a parallel job (job step) on the resources allocated with sbatch or <span class="docutils literal">salloc</span>.</div>
+<div class="line">If necessary, srun will first create a resource allocation in which to run the parallel job(s).</div>
+<div class="line">(see Single Command section below)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<section id="batch-scripts">
+<h5><a class="toc-backref" href="#toc-entry-17" role="doc-backlink">Batch Scripts</a></h5>
+<p>A batch script can be used to submit a job to run on the compute nodes at a
+later time. In this case, stdout and stderr will be written to a file(s) that
+can be opened after the job completes. Here is an example of a simple batch
+script:</p>
+<pre class="code bash literal-block"><code><span class="comment hashbang">#!/bin/bash
+</span><span class="comment single">#SBATCH -A &lt;project_id&gt;
+#SBATCH -J &lt;job_name&gt;
+#SBATCH -o %x-%j.out
+#SBATCH -t 00:05:00
+#SBATCH -p &lt;partition&gt;
+#SBATCH -N 2
+</span><span class="whitespace">
+</span>srun<span class="whitespace"> </span>-n4<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">2</span><span class="whitespace"> </span>./a.out</code></pre>
+<p>The Slurm submission options are preceded by <span class="docutils literal">#SBATCH</span>, making them appear as
+comments to a shell (since comments begin with <span class="docutils literal">#</span>). Slurm will look for
+submission options from the first line through the first non-comment line.
+Options encountered after the first non-comment line will not be read by Slurm.
+In the example script, the lines are:</p>
+<table>
+<thead>
+<tr><th class="head"><p>Line</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p>1</p></td>
+<td><p>[Optional] shell interpreter line</p></td>
+</tr>
+<tr><td><p>2</p></td>
+<td><p>OLCF project to charge</p></td>
+</tr>
+<tr><td><p>3</p></td>
+<td><p>Job name</p></td>
+</tr>
+<tr><td><p>4</p></td>
+<td><p>stdout file name ( <span class="docutils literal">%x</span> represents job name, <span class="docutils literal">%j</span> represents job id)</p></td>
+</tr>
+<tr><td><p>5</p></td>
+<td><p>Walltime requested (<span class="docutils literal">HH:MM:SS</span>)</p></td>
+</tr>
+<tr><td><p>6</p></td>
+<td><p>Batch queue</p></td>
+</tr>
+<tr><td><p>7</p></td>
+<td><p>Number of compute nodes requested</p></td>
+</tr>
+<tr><td><p>8</p></td>
+<td><p>Blank line</p></td>
+</tr>
+<tr><td><p>9</p></td>
+<td><p><span class="docutils literal">srun</span> command to launch parallel job (requesting 4 processes - 2 per node)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="interactive-jobs">
+<span id="interactive"></span><h5><a class="toc-backref" href="#toc-entry-18" role="doc-backlink">Interactive Jobs</a></h5>
+<p>To request an interactive job where multiple job steps (i.e., multiple srun
+commands) can be launched on the allocated compute node(s), the <span class="docutils literal">salloc</span>
+command can be used:</p>
+<pre class="code bash literal-block"><code>$<span class="whitespace"> </span>salloc<span class="whitespace"> </span>-A<span class="whitespace"> </span>&lt;project_id&gt;<span class="whitespace"> </span>-J<span class="whitespace"> </span>&lt;job_name&gt;<span class="whitespace"> </span>-t<span class="whitespace"> </span><span class="literal number">00</span>:05:00<span class="whitespace"> </span>-p<span class="whitespace"> </span>&lt;partition&gt;<span class="whitespace"> </span>-N<span class="whitespace"> </span><span class="literal number">2</span><span class="whitespace">
+</span>salloc:<span class="whitespace"> </span>Granted<span class="whitespace"> </span>job<span class="whitespace"> </span>allocation<span class="whitespace"> </span><span class="literal number">313</span><span class="whitespace">
+</span>salloc:<span class="whitespace"> </span>Waiting<span class="whitespace"> </span><span class="keyword">for</span><span class="whitespace"> </span>resource<span class="whitespace"> </span>configuration<span class="whitespace">
+</span>salloc:<span class="whitespace"> </span>Nodes<span class="whitespace"> </span>vapor<span class="operator">[</span><span class="literal number">01</span>-02<span class="operator">]</span><span class="whitespace"> </span>are<span class="whitespace"> </span>ready<span class="whitespace"> </span><span class="keyword">for</span><span class="whitespace"> </span>job<span class="whitespace">
+
+</span>$<span class="whitespace"> </span>srun<span class="whitespace"> </span>-n<span class="whitespace"> </span><span class="literal number">4</span><span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">2</span><span class="whitespace"> </span>./a.out<span class="whitespace">
+</span>&lt;output<span class="whitespace"> </span>printed<span class="whitespace"> </span>to<span class="whitespace"> </span>terminal&gt;<span class="whitespace">
+
+</span>$<span class="whitespace"> </span>srun<span class="whitespace"> </span>-n<span class="whitespace"> </span><span class="literal number">2</span><span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">1</span><span class="whitespace"> </span>./a.out<span class="whitespace">
+</span>&lt;output<span class="whitespace"> </span>printed<span class="whitespace"> </span>to<span class="whitespace"> </span>terminal&gt;</code></pre>
+<p>Here, <span class="docutils literal">salloc</span> is used to request an allocation of compute nodes for
+5 minutes. Once the resources become available, the user is granted access to
+the compute nodes (<span class="docutils literal">vapor01</span> and <span class="docutils literal">vapor02</span> in this case) and can launch job
+steps on them using srun.</p>
+</section>
+<section id="single-command-non-interactive">
+<span id="single-command"></span><h5><a class="toc-backref" href="#toc-entry-19" role="doc-backlink">Single Command (non-interactive)</a></h5>
+<pre class="code bash literal-block"><code>$<span class="whitespace"> </span>srun<span class="whitespace"> </span>-A<span class="whitespace"> </span>&lt;project_id&gt;<span class="whitespace"> </span>-t<span class="whitespace"> </span><span class="literal number">00</span>:05:00<span class="whitespace"> </span>-p<span class="whitespace"> </span>&lt;partition&gt;<span class="whitespace"> </span>-N<span class="whitespace"> </span><span class="literal number">2</span><span class="whitespace"> </span>-n<span class="whitespace"> </span><span class="literal number">4</span><span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">2</span><span class="whitespace"> </span>./a.out<span class="whitespace">
+</span>&lt;output<span class="whitespace"> </span>printed<span class="whitespace"> </span>to<span class="whitespace"> </span>terminal&gt;</code></pre>
+<p>The job name and output options have been removed since stdout/stderr are
+typically desired in the terminal window in this usage mode.</p>
+</section>
+</section>
+<section id="common-slurm-submission-options">
+<h4><a class="toc-backref" href="#toc-entry-20" role="doc-backlink">Common Slurm Submission Options</a></h4>
+<p>The table below summarizes commonly-used Slurm job submission options:</p>
+<table>
+<thead>
+<tr><th class="head"><p>Flag</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p><span class="docutils literal">A &lt;project_id&gt;</span></p></td>
+<td><p>Project ID to charge</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-J</span> &lt;job_name&gt;</span></p></td>
+<td><p>Name of job</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-p</span> &lt;partition&gt;</span></p></td>
+<td><p>Partition / batch queue</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-t</span> &lt;time&gt;</span></p></td>
+<td><p>Wall clock time &lt;<span class="docutils literal">HH:MM:SS</span>&gt;</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-N</span> &lt;number_of_nodes&gt;</span></p></td>
+<td><p>Number of compute nodes</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-o</span> &lt;file_name&gt;</span></p></td>
+<td><p>Standard output file name</p></td>
+</tr>
+<tr><td><p><span class="docutils literal"><span class="pre">-e</span> &lt;file_name&gt;</span></p></td>
+<td><p>Standard error file name</p></td>
+</tr>
+</tbody>
+</table>
+<p>For more information about these and/or other options, please see the
+<span class="docutils literal">sbatch</span> man page.</p>
+</section>
+<section id="other-common-slurm-commands">
+<h4><a class="toc-backref" href="#toc-entry-21" role="doc-backlink">Other Common Slurm Commands</a></h4>
+<p>The table below summarizes commonly-used Slurm commands:</p>
+<table>
+<thead>
+<tr><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p><span class="docutils literal">sinfo</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to view partition and node information.</div>
+<div class="line">E.g., to view user-defined details about the batch partition:</div>
+<div class="line"><span class="docutils literal">sinfo <span class="pre">-p</span> partition <span class="pre">-o</span> &quot;%15N %10D %10P %10a %10c %10z&quot;</span></div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">squeue</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to view job and job step information for jobs in the scheduling queue.</div>
+<div class="line">E.g., to see all jobs from a specific user:</div>
+<div class="line"><span class="docutils literal">squeue <span class="pre">-l</span> <span class="pre">-u</span> &lt;user_id&gt;</span></div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">sacct</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to view accounting data for jobs and job steps in the job accounting log (currently in the queue or recently completed).</div>
+<div class="line">E.g., to see a list of specified information about all jobs submitted/run by a users since 1 PM on October 10, 2025</div>
+<div class="line"><span class="docutils literal">sacct <span class="pre">-u</span> &lt;username&gt; <span class="pre">-S</span> <span class="pre">2025-10-04T13:00:00</span> <span class="pre">-o</span> &quot;jobid%5,jobname%25,user%15,nodelist%20&quot; <span class="pre">-X</span></span></div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">scancel</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to signal or cancel jobs or job steps.</div>
+<div class="line">E.g., to cancel a job:</div>
+<div class="line"><span class="docutils literal">scancel &lt;jobid&gt;</span></div>
+</div>
+</td>
+</tr>
+<tr><td><p><span class="docutils literal">scontrol</span></p></td>
+<td><div class="line-block">
+<div class="line">Used to view or modify job configuration.</div>
+<div class="line">E.g., to place a job on hold:</div>
+<div class="line"><span class="docutils literal">scontrol hold &lt;jobid&gt;</span></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="vapor-container-guide">
+<h2><a class="toc-backref" href="#toc-entry-22" role="doc-backlink">Vapor container guide</a></h2>
+<section id="building-and-running-simple-mpi-example">
+<h3><a class="toc-backref" href="#toc-entry-23" role="doc-backlink">Building and running simple MPI example</a></h3>
+<p>simplempich.def</p>
+<pre class="code singularity literal-block"><code><span class="keyword">Bootstrap</span>:<span class="whitespace"> </span>docker
+<span class="keyword">From</span>:<span class="whitespace"> </span>opensuse/leap:<span class="literal number">15.6</span>
+<span class="generic heading">%environment</span><span class="whitespace">
+    </span><span class="comment single"># Point to MPICH binaries, libraries man pages
+</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_DIR</span><span class="operator">=</span>/opt/mpich<span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/lib:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span><span class="name variable">$MPICH_DIR</span>/share/man:<span class="name variable">$MANPATH</span><span class="whitespace">
+    </span><span class="comment single"># Point to rocm locations
+</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ROCM_PATH</span><span class="operator">=</span>/opt/rocm<span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/lib:/opt/rocm/lib64:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+
+</span><span class="generic heading">%post</span><span class="whitespace">
+</span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing required packages...&quot;</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DEBIAN_FRONTEND</span><span class="operator">=</span>noninteractive<span class="whitespace">
+</span>zypper<span class="whitespace"> </span>install<span class="whitespace"> </span>-y<span class="whitespace"> </span>wget<span class="whitespace"> </span>tar<span class="whitespace"> </span>make<span class="whitespace"> </span>sudo<span class="whitespace"> </span>git<span class="whitespace"> </span>fakeroot<span class="whitespace"> </span>gzip<span class="whitespace"> </span>gcc<span class="whitespace"> </span>gcc-c++<span class="whitespace"> </span>gcc-fortran<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_VERSION</span><span class="operator">=</span><span class="literal number">3</span>.4.2<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_URL</span><span class="operator">=</span><span class="literal string double">&quot;http://www.mpich.org/static/downloads/</span><span class="name variable">$MPICH_VERSION</span><span class="literal string double">/mpich-</span><span class="name variable">$MPICH_VERSION</span><span class="literal string double">.tar.gz&quot;</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_DIR</span><span class="operator">=</span>/opt/mpich<span class="whitespace">
+</span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing MPICH...&quot;</span><span class="whitespace">
+</span>mkdir<span class="whitespace"> </span>-p<span class="whitespace"> </span>/mpich<span class="whitespace">
+</span>mkdir<span class="whitespace"> </span>-p<span class="whitespace"> </span>/opt<span class="whitespace">
+</span><span class="comment single"># Download
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>/mpich<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>wget<span class="whitespace"> </span>-O<span class="whitespace"> </span>mpich-<span class="name variable">$MPICH_VERSION</span>.tar.gz<span class="whitespace"> </span><span class="name variable">$MPICH_URL</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>tar<span class="whitespace"> </span>--no-same-owner<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>mpich-<span class="name variable">$MPICH_VERSION</span>.tar.gz<span class="whitespace">
+</span><span class="comment single"># Compile and install
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>/mpich/mpich-<span class="name variable">$MPICH_VERSION</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>./configure<span class="whitespace"> </span>--disable-fortran<span class="whitespace"> </span>--with-device<span class="operator">=</span>ch4:ofi<span class="whitespace"> </span>--prefix<span class="operator">=</span><span class="name variable">$MPICH_DIR</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>make<span class="whitespace"> </span>install<span class="whitespace">
+</span>rm<span class="whitespace"> </span>-rf<span class="whitespace"> </span>/mpich<span class="whitespace">
+</span><span class="comment single"># Set env variables so we can compile our application
+</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="name variable">$MPICH_DIR</span>/bin:<span class="name variable">$PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="name variable">$MPICH_DIR</span>/lib:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Compiling the MPI application...&quot;</span><span class="whitespace">
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>/<span class="whitespace">
+</span>curl<span class="whitespace"> </span>-o<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>tar<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>--no-same-owner<span class="whitespace">
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>osu-micro-benchmarks-7.2<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>./configure<span class="whitespace"> </span><span class="name variable">CC</span><span class="operator">=</span>mpicc<span class="whitespace"> </span><span class="name variable">CXX</span><span class="operator">=</span>mpicc<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>make<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>rm<span class="whitespace"> </span>../osubenchmarks-7.2.tar.gz</code></pre>
+<p>Build container with</p>
+<pre class="code bash literal-block"><code>apptainer<span class="whitespace"> </span>build<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>simplempich.def</code></pre>
+<p>simpleintelmpi.def</p>
+<pre class="code singularity literal-block"><code><span class="keyword">Bootstrap</span>:<span class="whitespace"> </span>docker
+<span class="keyword">From</span>:<span class="whitespace"> </span>opensuse/leap:<span class="literal number">15.6</span>
+<span class="whitespace">
+</span><span class="generic heading">%files</span><span class="whitespace">
+</span>./intelenvs<span class="whitespace"> </span>/intelenvs<span class="whitespace">
+
+</span><span class="generic heading">%environment</span><span class="whitespace">
+    </span><span class="comment single"># Point to MPICH binaries, libraries man pages
+</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_DIR</span><span class="operator">=</span>/opt/mpich<span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/lib:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span><span class="name variable">$MPICH_DIR</span>/share/man:<span class="name variable">$MANPATH</span><span class="whitespace">
+    </span><span class="comment single"># Point to rocm locations
+</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ROCM_PATH</span><span class="operator">=</span>/opt/rocm<span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/lib:/opt/rocm/lib64:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+    </span><span class="name builtin">source</span><span class="whitespace"> </span>/intelenvs<span class="whitespace">
+
+</span><span class="generic heading">%post</span><span class="whitespace">
+</span><span class="name builtin">set</span><span class="whitespace"> </span>-xe<span class="whitespace">
+</span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing required packages...&quot;</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DEBIAN_FRONTEND</span><span class="operator">=</span>noninteractive<span class="whitespace">
+</span>zypper<span class="whitespace"> </span>install<span class="whitespace"> </span>-y<span class="whitespace"> </span>wget<span class="whitespace"> </span>tar<span class="whitespace"> </span>make<span class="whitespace"> </span>sudo<span class="whitespace"> </span>git<span class="whitespace"> </span>fakeroot<span class="whitespace"> </span>gzip<span class="whitespace"> </span>gcc<span class="whitespace"> </span>gcc-c++<span class="whitespace"> </span>gcc-fortran<span class="whitespace"> </span>which<span class="whitespace"> </span>vim<span class="whitespace">
+
+
+</span><span class="comment single">## adding intel and internal cray pkg repos
+</span>tee<span class="whitespace"> </span>&gt;<span class="whitespace"> </span>/etc/zypp/repos.d/oneAPI.repo<span class="whitespace"> </span><span class="literal string">&lt;&lt; EOF
+[oneAPI]
+name=Intel® oneAPI repository
+baseurl=https://yum.repos.intel.com/oneapi
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+EOF</span><span class="whitespace">
+
+
+</span>zypper<span class="whitespace"> </span>--releasever<span class="operator">=</span><span class="literal number">15</span>.6<span class="whitespace"> </span>--non-interactive<span class="whitespace"> </span>--gpg-auto-import-keys<span class="whitespace">  </span>refresh<span class="whitespace">
+</span><span class="comment single">## installing intel 2023.2 since that is the version that has intel-classic 2021.10 (and 2023.2 is the last release that provides intel-classic)
+</span>zypper<span class="whitespace"> </span>--non-interactive<span class="whitespace"> </span>--gpg-auto-import-keys<span class="whitespace"> </span>install<span class="whitespace"> </span>-y<span class="whitespace"> </span>intel-dpcpp-cpp-compiler-2023.2.0<span class="whitespace">  </span>intel-oneapi-compiler-fortran-2023.2.0<span class="whitespace"> </span>intel-oneapi-mpi-devel-2021.10.0<span class="whitespace">
+
+</span><span class="name builtin">source</span><span class="whitespace"> </span>/intelenvs<span class="whitespace">
+</span>which<span class="whitespace"> </span>mpicc<span class="whitespace">
+</span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Compiling the MPI application...&quot;</span><span class="whitespace">
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>/<span class="whitespace">
+</span>curl<span class="whitespace"> </span>-o<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>tar<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>--no-same-owner<span class="whitespace">
+</span><span class="name builtin">cd</span><span class="whitespace"> </span>osu-micro-benchmarks-7.2<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>./configure<span class="whitespace"> </span><span class="name variable">CC</span><span class="operator">=</span>mpiicc<span class="whitespace"> </span><span class="name variable">CXX</span><span class="operator">=</span>mpiicpc<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>make<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>rm<span class="whitespace"> </span>../osubenchmarks-7.2.tar.gz</code></pre>
+<p>intelenvs file</p>
+<pre class="code bash literal-block"><code><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_VERSION</span><span class="operator">=</span><span class="literal number">2023</span>.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_COMPILER_TYPE</span><span class="operator">=</span>CLASSIC<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/host/linux64/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMAKE_PREFIX_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/IntelDPCPP:<span class="name variable">$CMAKE_PREFIX_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">OCL_ICD_FILENAMES</span><span class="operator">=</span>libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64/libintelocl.so<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ACL_BOARD_VENDOR_PATH</span><span class="operator">=</span>/opt/intel/OpenCLFPGA/oneAPI/Boards<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">FPGA_VARS_DIR</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMPLR_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTELFPGAOCLSDKROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DIAGUTIL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/sys_check/sys_check.sh:<span class="name variable">$DIAGUTIL_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/documentation/en/man/common:<span class="name variable">$MANPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/bin:/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/bin:<span class="name variable">$PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/include:/opt/intel/oneapi/mkl/2023.2.0/include:<span class="name variable">$CPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MKLROOT</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/bin:/opt/intel/oneapi/mkl/2023.2.0/bin/intel64:<span class="name variable">$PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INCLUDE_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/include:<span class="name variable">$INCLUDE_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">I_MPI_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0</code></pre>
+<p>build with</p>
+<pre class="code bash literal-block"><code>apptainer<span class="whitespace"> </span>build<span class="whitespace"> </span>simpleintelmpi.sif<span class="whitespace"> </span>simpleintelmpi.def</code></pre>
+<p>submit_bind.sl</p>
+<pre class="code bash literal-block"><code><span class="comment hashbang">#!/bin/bash
+</span><span class="whitespace">
+</span><span class="comment single">#SBATCH -A stf007uanofn
+#SBATCH -J test
+#SBATCH -N 2
+#SBATCH -o logs/subil_%j.out
+#SBATCH -t 01:00:00
+###SBATCH --ntasks-per-node=16
+</span><span class="whitespace">
+</span>module<span class="whitespace"> </span>reset<span class="whitespace">
+</span>module<span class="whitespace"> </span>load<span class="whitespace"> </span>oneapi<span class="whitespace">
+
+
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINERENV_LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">:/usr/lib64/libibverbs::\$LD_LIBRARY_PATH&quot;</span><span class="whitespace">
+</span><span class="comment single">#export MPICH_SMP_SINGLE_COPY_MODE=NONE
+#export APPTAINER_CONTAINLIBS=&quot;/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libdrm.so.2,/lib64/libtinfo.so.6,/usr/lib64/libnl-3.so.200,/usr/lib64/librdmacm.so.1,/usr/lib64/libibverbs.so.1,/usr/lib64/libibverbs/libmlx5-rdmav34.so,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200&quot;
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_CONTAINLIBS</span><span class="operator">=</span><span class="literal string double">&quot;/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libnl-3.so.200,/usr/lib64/libibverbs.so.1,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200&quot;</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_BIND</span><span class="operator">=</span>/sw/vapor,/var/spool/slurmd,<span class="literal string interpol">${</span><span class="name variable">PWD</span><span class="literal string interpol">}</span>,/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,<span class="literal string interpol">${</span><span class="name variable">HOME</span><span class="literal string interpol">}</span><span class="whitespace">
+
+</span><span class="name builtin">set</span><span class="whitespace"> </span>-x<span class="whitespace">
+
+</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>./tmp/osu-micro-benchmarks-7.2/c/mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
+</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
+</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simpleintelmpi.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span></code></pre>
+<p>submit_hybrid.sl</p>
+<pre class="code bash literal-block"><code><span class="comment hashbang">#!/bin/bash
+</span><span class="whitespace">
+</span><span class="comment single">#SBATCH -A stf007uanofn
+#SBATCH -J test
+#SBATCH -N 2
+#SBATCH -o logs/subil_%j.out
+#SBATCH -t 01:00:00
+###SBATCH --ntasks-per-node=16
+</span><span class="whitespace">
+</span>module<span class="whitespace"> </span>reset<span class="whitespace">
+</span>module<span class="whitespace"> </span>load<span class="whitespace"> </span>oneapi<span class="whitespace">
+
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_BIND</span><span class="operator">=</span>/sw/vapor,/var/spool/slurmd,<span class="literal string interpol">${</span><span class="name variable">PWD</span><span class="literal string interpol">}</span>,/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,<span class="literal string interpol">${</span><span class="name variable">HOME</span><span class="literal string interpol">}</span><span class="whitespace">
+
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_ENV_DISPLAY</span><span class="operator">=</span><span class="literal number">1</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_VERSION_DISPLAY</span><span class="operator">=</span><span class="literal number">1</span><span class="whitespace">
+
+</span><span class="name builtin">set</span><span class="whitespace"> </span>-x<span class="whitespace">
+</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
+
+</span><span class="comment single"># intel mpi container doesn't work with hybrid
+#srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096</span></code></pre>
+</section>
+</section>
+</main>
+</body>
+</html>
