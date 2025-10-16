@@ -434,18 +434,20 @@ div.abstract p.topic-title {
   text-align: center }
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
-div.hint, div.important, div.note, div.tip, div.warning {
+aside.admonition, aside.attention, aside.caution, aside.danger, aside.error,
+aside.hint, aside.important, aside.note, aside.tip, aside.warning,
+div.hint, div.important, aside.note, div.tip, aside.warning {
   margin: 2em ;
   border: medium outset ;
   padding: 1em }
 
-div.note, div.warning {
+aside.note, aside.warning {
   margin:1.5em 0px;
   border: none;
 }
 
-div.note p.admonition-title,
-div.warning p.admonition-title
+aside.note p.admonition-title,
+aside.warning p.admonition-title
 {
   display:none;
 }
@@ -454,15 +456,15 @@ div.warning p.admonition-title
  * http://css-tricks.com/snippets/css/clear-fix/
  */
 
-div.note:after,
-div.warning:after {
+aside.note:after,
+aside.warning:after {
   content:"";
   display:table;
   clear:both;
 }
 
-div.note p:before,
-div.warning p:before {
+aside.note p:before,
+aside.warning p:before {
   display:block;
   float:left;
   font-size:4em;
@@ -473,22 +475,30 @@ div.warning p:before {
   content:'\0270D'; /*handwriting*/
 }
 
-div.warning p:before {
+aside.warning p:before {
   content:'\026A0'; /*warning*/
 }
 
 div.admonition p.admonition-title, div.hint p.admonition-title,
-div.important p.admonition-title, div.note p.admonition-title,
+div.important p.admonition-title, aside.note p.admonition-title,
+aside.admonition p.admonition-title, aside.hint p.admonition-title,
+aside.important p.admonition-title, aside.note p.admonition-title,
+aside.tip p.admonition-title,
 div.tip p.admonition-title {
   font-weight: bold ;
   font-family: sans-serif }
 
+
 div.attention p.admonition-title, div.caution p.admonition-title,
 div.danger p.admonition-title, div.error p.admonition-title,
-div.warning p.admonition-title, .code .error {
+aside.attention p.admonition-title, aside.caution p.admonition-title,
+aside.danger p.admonition-title, aside.error p.admonition-title,
+aside.warning p.admonition-title, 
+aside.warning p.admonition-title, .code .error {
   color: red ;
   font-weight: bold ;
   font-family: sans-serif }
+
 
 /* Uncomment (and remove this text!) to get reduced vertical space in
    compound paragraphs.
