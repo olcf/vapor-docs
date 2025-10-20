@@ -228,6 +228,8 @@ associated with these methods are shown in the table below and examples of
 their use can be found in the related subsections.
 
 +------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Command    |  Description                                                                                                                                                                 |
++============+==============================================================================================================================================================================+
 | ``sbatch`` | | Used to submit a batch script to allocate a Slurm job allocation. The script contains options preceded with ``#SBATCH``.                                                   |
 |            | | (see Batch Scripts section below)                                                                                                                                          |
 +------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -387,197 +389,178 @@ The table below summarizes commonly-used Slurm commands:
 Vapor container guide
 =====================
 
-Building and running simple MPI example
----------------------------------------
 
-simplempich.def
+You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
+can build containers from Apptainer defintion files or pull images from a registry like Dockerhub. simplempich.def
 
-.. code-block:: singularity 
+Building and running OSU Benchmarks container example (with GCC and MPICH)
+--------------------------------------------------------------------------
 
-    Bootstrap: docker
-    From: opensuse/leap:15.6
-    %environment
-        # Point to MPICH binaries, libraries man pages
+- Create a file named ``simplempich.def``
+
+    .. code-block:: singularity 
+    
+        Bootstrap: docker
+        From: opensuse/leap:15.6
+        %environment
+            # Point to MPICH binaries, libraries man pages
+            export MPICH_DIR=/opt/mpich
+            export PATH="$MPICH_DIR/bin:$PATH"
+            export LD_LIBRARY_PATH="$MPICH_DIR/lib:$LD_LIBRARY_PATH"
+            export MANPATH=$MPICH_DIR/share/man:$MANPATH
+            # Point to rocm locations
+            export ROCM_PATH=/opt/rocm
+            export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/lib64:$LD_LIBRARY_PATH"
+            export PATH="/opt/rocm/bin:$PATH"
+        
+        %post
+        echo "Installing required packages..."
+        export DEBIAN_FRONTEND=noninteractive
+        zypper install -y wget tar make sudo git fakeroot gzip gcc gcc-c++ gcc-fortran
+        export MPICH_VERSION=3.4.2
+        export MPICH_URL="http://www.mpich.org/static/downloads/$MPICH_VERSION/mpich-$MPICH_VERSION.tar.gz"
         export MPICH_DIR=/opt/mpich
-        export PATH="$MPICH_DIR/bin:$PATH"
-        export LD_LIBRARY_PATH="$MPICH_DIR/lib:$LD_LIBRARY_PATH"
-        export MANPATH=$MPICH_DIR/share/man:$MANPATH
-        # Point to rocm locations
-        export ROCM_PATH=/opt/rocm
-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/lib64:$LD_LIBRARY_PATH"
-        export PATH="/opt/rocm/bin:$PATH"
+        echo "Installing MPICH..."
+        mkdir -p /mpich
+        mkdir -p /opt
+        # Download
+        cd /mpich && wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && tar --no-same-owner -xzf mpich-$MPICH_VERSION.tar.gz
+        # Compile and install
+        cd /mpich/mpich-$MPICH_VERSION && ./configure --disable-fortran --with-device=ch4:ofi --prefix=$MPICH_DIR && make install
+        rm -rf /mpich
+        # Set env variables so we can compile our application
+        
+        export PATH=$MPICH_DIR/bin:$PATH
+        export LD_LIBRARY_PATH=$MPICH_DIR/lib:$LD_LIBRARY_PATH
+        echo "Compiling the MPI application..."
+        cd /
+        curl -o osubenchmarks-7.2.tar.gz https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz && tar -xzf osubenchmarks-7.2.tar.gz --no-same-owner
+        cd osu-micro-benchmarks-7.2 && ./configure CC=mpicc CXX=mpicc  && make  && rm ../osubenchmarks-7.2.tar.gz
+
+- Build the container with
+
+    .. code-block:: bash
     
-    %post
-    echo "Installing required packages..."
-    export DEBIAN_FRONTEND=noninteractive
-    zypper install -y wget tar make sudo git fakeroot gzip gcc gcc-c++ gcc-fortran
-    export MPICH_VERSION=3.4.2
-    export MPICH_URL="http://www.mpich.org/static/downloads/$MPICH_VERSION/mpich-$MPICH_VERSION.tar.gz"
-    export MPICH_DIR=/opt/mpich
-    echo "Installing MPICH..."
-    mkdir -p /mpich
-    mkdir -p /opt
-    # Download
-    cd /mpich && wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && tar --no-same-owner -xzf mpich-$MPICH_VERSION.tar.gz
-    # Compile and install
-    cd /mpich/mpich-$MPICH_VERSION && ./configure --disable-fortran --with-device=ch4:ofi --prefix=$MPICH_DIR && make install
-    rm -rf /mpich
-    # Set env variables so we can compile our application
+        apptainer build simplempich.sif simplempich.def
+
+Building and running OSU Benchmarks container example (with Intel and Intel MPI)
+--------------------------------------------------------------------------------
+
+If you want to build application in the container with the Intel Classic compiler and Intel MPI, you will need to install the appropriate version of the Intel OneAPI release, and set up several environment variables.
+
+- First create the file ``intelenvs`` with the required environment variables. This file will be copied into the container image and will be sourced every time the container is started to set up the environment variables.
+
+    .. code-block:: bash
     
-    export PATH=$MPICH_DIR/bin:$PATH
-    export LD_LIBRARY_PATH=$MPICH_DIR/lib:$LD_LIBRARY_PATH
-    echo "Compiling the MPI application..."
-    cd /
-    curl -o osubenchmarks-7.2.tar.gz https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz && tar -xzf osubenchmarks-7.2.tar.gz --no-same-owner
-    cd osu-micro-benchmarks-7.2 && ./configure CC=mpicc CXX=mpicc  && make  && rm ../osubenchmarks-7.2.tar.gz
+        export INTEL_PATH=/opt/intel/oneapi/compiler/2023.2.0
+        export INTEL_VERSION=2023.2.0
+        export INTEL_COMPILER_TYPE=CLASSIC
+        export LD_LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/host/linux64/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:$LD_LIBRARY_PATH
+        export CMAKE_PREFIX_PATH=/opt/intel/oneapi/compiler/2023.2.0/linux/IntelDPCPP:$CMAKE_PREFIX_PATH
+        export NLSPATH=/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/locale/%l_%t/%N:$NLSPATH
+        export OCL_ICD_FILENAMES=libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64/libintelocl.so
+        export ACL_BOARD_VENDOR_PATH=/opt/intel/OpenCLFPGA/oneAPI/Boards
+        export FPGA_VARS_DIR=/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga
+        export CMPLR_ROOT=/opt/intel/oneapi/compiler/2023.2.0
+        export INTELFPGAOCLSDKROOT=/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga
+        export LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:$LIBRARY_PATH
+        export DIAGUTIL_PATH=/opt/intel/oneapi/compiler/2023.2.0/sys_check/sys_check.sh:$DIAGUTIL_PATH
+        export MANPATH=/opt/intel/oneapi/compiler/2023.2.0/documentation/en/man/common:$MANPATH
+        export PATH=/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/bin:/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/bin:$PATH
+        export PKG_CONFIG_PATH=/opt/intel/oneapi/compiler/2023.2.0/lib/pkgconfig:$PKG_CONFIG_PATH
+        export LD_LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:$LD_LIBRARY_PATH
+        export CPATH=/opt/intel/oneapi/compiler/2023.2.0/linux/include:/opt/intel/oneapi/mkl/2023.2.0/include:$CPATH
+        export NLSPATH=/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/locale/%l_%t/%N:$NLSPATH
+        export LIBRARY_PATH=/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:$LIBRARY_PATH
+        export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
+        export PATH=/opt/intel/oneapi/mpi/2021.10.0/bin:/opt/intel/oneapi/mkl/2023.2.0/bin/intel64:$PATH
+        export PKG_CONFIG_PATH=/opt/intel/oneapi/mkl/2023.2.0/lib/pkgconfig:$PKG_CONFIG_PATH
+        export INCLUDE_PATH=/opt/intel/oneapi/mpi/2021.10.0/include:$INCLUDE_PATH
+        export I_MPI_ROOT=/opt/intel/oneapi/mpi/2021.10.0
 
-Build container with
+- Create the file ``simpleintelmpi.def``
 
-.. code-block:: bash
-
-    apptainer build simplempich.sif simplempich.def
-
-simpleintelmpi.def
-
-.. code-block:: singularity 
-
-    Bootstrap: docker
-    From: opensuse/leap:15.6
+    .. code-block:: singularity 
     
-    %files
-    ./intelenvs /intelenvs
+        Bootstrap: docker
+        From: opensuse/leap:15.6
+        
+        %files
+        ./intelenvs /intelenvs
+        
+        %environment
+            # Point to MPICH binaries, libraries man pages
+            export MPICH_DIR=/opt/mpich
+            export PATH="$MPICH_DIR/bin:$PATH"
+            export LD_LIBRARY_PATH="$MPICH_DIR/lib:$LD_LIBRARY_PATH"
+            export MANPATH=$MPICH_DIR/share/man:$MANPATH
+            # Point to rocm locations
+            export ROCM_PATH=/opt/rocm
+            export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/lib64:$LD_LIBRARY_PATH"
+            export PATH="/opt/rocm/bin:$PATH"
+            source /intelenvs
+        
+        %post
+        set -xe
+        echo "Installing required packages..."
+        export DEBIAN_FRONTEND=noninteractive
+        zypper install -y wget tar make sudo git fakeroot gzip gcc gcc-c++ gcc-fortran which vim
+        
+        
+        ## adding intel and internal cray pkg repos
+        tee > /etc/zypp/repos.d/oneAPI.repo << EOF
+        [oneAPI]
+        name=Intel® oneAPI repository
+        baseurl=https://yum.repos.intel.com/oneapi
+        enabled=1
+        gpgcheck=1
+        repo_gpgcheck=1
+        gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        EOF
+        
     
-    %environment
-        # Point to MPICH binaries, libraries man pages
-        export MPICH_DIR=/opt/mpich
-        export PATH="$MPICH_DIR/bin:$PATH"
-        export LD_LIBRARY_PATH="$MPICH_DIR/lib:$LD_LIBRARY_PATH"
-        export MANPATH=$MPICH_DIR/share/man:$MANPATH
-        # Point to rocm locations
-        export ROCM_PATH=/opt/rocm
-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/lib64:$LD_LIBRARY_PATH"
-        export PATH="/opt/rocm/bin:$PATH"
+        zypper --releasever=15.6 --non-interactive --gpg-auto-import-keys  refresh
+        ## installing intel 2023.2 since that is the version that has intel-classic 2021.10 (and 2023.2 is the last release that provides intel-classic)
+        zypper --non-interactive --gpg-auto-import-keys install -y intel-dpcpp-cpp-compiler-2023.2.0  intel-oneapi-compiler-fortran-2023.2.0 intel-oneapi-mpi-devel-2021.10.0
+        
         source /intelenvs
+        which mpicc
+        echo "Compiling the MPI application..."
+        cd /
+        curl -o osubenchmarks-7.2.tar.gz https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz && tar -xzf osubenchmarks-7.2.tar.gz --no-same-owner
+        cd osu-micro-benchmarks-7.2 && ./configure CC=mpiicc CXX=mpiicpc  && make  && rm ../osubenchmarks-7.2.tar.gz
     
-    %post
-    set -xe
-    echo "Installing required packages..."
-    export DEBIAN_FRONTEND=noninteractive
-    zypper install -y wget tar make sudo git fakeroot gzip gcc gcc-c++ gcc-fortran which vim
+
+- Build the container image with
+
+    .. code-block:: bash
     
-    
-    ## adding intel and internal cray pkg repos
-    tee > /etc/zypp/repos.d/oneAPI.repo << EOF
-    [oneAPI]
-    name=Intel® oneAPI repository
-    baseurl=https://yum.repos.intel.com/oneapi
-    enabled=1
-    gpgcheck=1
-    repo_gpgcheck=1
-    gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-    EOF
-    
-    
-    zypper --releasever=15.6 --non-interactive --gpg-auto-import-keys  refresh
-    ## installing intel 2023.2 since that is the version that has intel-classic 2021.10 (and 2023.2 is the last release that provides intel-classic)
-    zypper --non-interactive --gpg-auto-import-keys install -y intel-dpcpp-cpp-compiler-2023.2.0  intel-oneapi-compiler-fortran-2023.2.0 intel-oneapi-mpi-devel-2021.10.0
-    
-    source /intelenvs
-    which mpicc
-    echo "Compiling the MPI application..."
-    cd /
-    curl -o osubenchmarks-7.2.tar.gz https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz && tar -xzf osubenchmarks-7.2.tar.gz --no-same-owner
-    cd osu-micro-benchmarks-7.2 && ./configure CC=mpiicc CXX=mpiicpc  && make  && rm ../osubenchmarks-7.2.tar.gz
-
-intelenvs file
-
-.. code-block:: bash
-
-    export INTEL_PATH=/opt/intel/oneapi/compiler/2023.2.0
-    export INTEL_VERSION=2023.2.0
-    export INTEL_COMPILER_TYPE=CLASSIC
-    export LD_LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/host/linux64/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:$LD_LIBRARY_PATH
-    export CMAKE_PREFIX_PATH=/opt/intel/oneapi/compiler/2023.2.0/linux/IntelDPCPP:$CMAKE_PREFIX_PATH
-    export NLSPATH=/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/locale/%l_%t/%N:$NLSPATH
-    export OCL_ICD_FILENAMES=libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64/libintelocl.so
-    export ACL_BOARD_VENDOR_PATH=/opt/intel/OpenCLFPGA/oneAPI/Boards
-    export FPGA_VARS_DIR=/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga
-    export CMPLR_ROOT=/opt/intel/oneapi/compiler/2023.2.0
-    export INTELFPGAOCLSDKROOT=/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga
-    export LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:$LIBRARY_PATH
-    export DIAGUTIL_PATH=/opt/intel/oneapi/compiler/2023.2.0/sys_check/sys_check.sh:$DIAGUTIL_PATH
-    export MANPATH=/opt/intel/oneapi/compiler/2023.2.0/documentation/en/man/common:$MANPATH
-    export PATH=/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/bin:/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/bin:$PATH
-    export PKG_CONFIG_PATH=/opt/intel/oneapi/compiler/2023.2.0/lib/pkgconfig:$PKG_CONFIG_PATH
-    export LD_LIBRARY_PATH=/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:$LD_LIBRARY_PATH
-    export CPATH=/opt/intel/oneapi/compiler/2023.2.0/linux/include:/opt/intel/oneapi/mkl/2023.2.0/include:$CPATH
-    export NLSPATH=/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/locale/%l_%t/%N:$NLSPATH
-    export LIBRARY_PATH=/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:$LIBRARY_PATH
-    export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
-    export PATH=/opt/intel/oneapi/mpi/2021.10.0/bin:/opt/intel/oneapi/mkl/2023.2.0/bin/intel64:$PATH
-    export PKG_CONFIG_PATH=/opt/intel/oneapi/mkl/2023.2.0/lib/pkgconfig:$PKG_CONFIG_PATH
-    export INCLUDE_PATH=/opt/intel/oneapi/mpi/2021.10.0/include:$INCLUDE_PATH
-    export I_MPI_ROOT=/opt/intel/oneapi/mpi/2021.10.0
-
-build with
-
-.. code-block:: bash
-
-    apptainer build simpleintelmpi.sif simpleintelmpi.def
+        apptainer build simpleintelmpi.sif simpleintelmpi.def
 
 
-submit_bind.sl
+- To run the container, write a job script that will bind in the host's MPI libraries into the container. For example, create the below file ``submitbind.sl`` and submit the job with ``sbatch submitbind.sl``.
 
-.. code-block:: bash
-
-    #!/bin/bash
+    .. code-block:: bash
     
-    #SBATCH -A stf007uanofn
-    #SBATCH -J test
-    #SBATCH -N 2
-    #SBATCH -o logs/subil_%j.out
-    #SBATCH -t 01:00:00
-    ###SBATCH --ntasks-per-node=16
+        #!/bin/bash
+        
+        #SBATCH -A stf007uanofn
+        #SBATCH -J test
+        #SBATCH -N 2
+        #SBATCH -o logs/subil_%j.out
+        #SBATCH -t 01:00:00
+        ###SBATCH --ntasks-per-node=16
+        
+        module reset
+        module load oneapi
+        
+        
+        export APPTAINERENV_LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib64/libibverbs::\$LD_LIBRARY_PATH"
+        export APPTAINER_CONTAINLIBS="/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libnl-3.so.200,/usr/lib64/libibverbs.so.1,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200"
+        export APPTAINER_BIND=/sw/vapor,/var/spool/slurmd,${PWD},/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,${HOME}
+        
+        set -x
+        
+        srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simplempich.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
+        srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
     
-    module reset
-    module load oneapi
-    
-    
-    export APPTAINERENV_LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib64/libibverbs::\$LD_LIBRARY_PATH"
-    #export MPICH_SMP_SINGLE_COPY_MODE=NONE
-    #export APPTAINER_CONTAINLIBS="/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libdrm.so.2,/lib64/libtinfo.so.6,/usr/lib64/libnl-3.so.200,/usr/lib64/librdmacm.so.1,/usr/lib64/libibverbs.so.1,/usr/lib64/libibverbs/libmlx5-rdmav34.so,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200"
-    export APPTAINER_CONTAINLIBS="/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libnl-3.so.200,/usr/lib64/libibverbs.so.1,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200"
-    export APPTAINER_BIND=/sw/vapor,/var/spool/slurmd,${PWD},/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,${HOME}
-    
-    set -x
-    
-    srun --ntasks-per-node=16 ./tmp/osu-micro-benchmarks-7.2/c/mpi/collective/blocking/osu_alltoall -m 4096
-    srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simplempich.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
-    srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
-    
-submit_hybrid.sl
-
-.. code-block:: bash
-
-    #!/bin/bash
-    
-    #SBATCH -A stf007uanofn
-    #SBATCH -J test
-    #SBATCH -N 2
-    #SBATCH -o logs/subil_%j.out
-    #SBATCH -t 01:00:00
-    ###SBATCH --ntasks-per-node=16
-    
-    module reset
-    module load oneapi
-    
-    export APPTAINER_BIND=/sw/vapor,/var/spool/slurmd,${PWD},/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,${HOME}
-    
-    export MPICH_ENV_DISPLAY=1
-    export MPICH_VERSION_DISPLAY=1
-    
-    set -x
-    srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simplempich.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
-    
-    # intel mpi container doesn't work with hybrid
-    #srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096

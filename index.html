@@ -854,7 +854,8 @@ ul.auto-toc {
 </li>
 <li><p><a class="reference internal" href="#vapor-container-guide" id="toc-entry-22">Vapor container guide</a></p>
 <ul>
-<li><p><a class="reference internal" href="#building-and-running-simple-mpi-example" id="toc-entry-23">Building and running simple MPI example</a></p></li>
+<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich" id="toc-entry-23">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></p></li>
+<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-intel-and-intel-mpi" id="toc-entry-24">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></p></li>
 </ul>
 </li>
 </ul>
@@ -863,7 +864,7 @@ ul.auto-toc {
 <h2><a class="toc-backref" href="#toc-entry-1" role="doc-backlink">System Overview</a></h2>
 <aside class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Access to this system is only available through special projects with explicit approval from Chris Fuson.
+<p>Access to this system is only available through special projects in NCCS and NCRC with explicit approval.
 This cluster is not intended for general-use purposes.</p>
 </aside>
 <p>Vapor is an Azure-based cluster provides experimental high-performance computing resources for the
@@ -902,19 +903,19 @@ NCRC.</p>
 <tbody>
 <tr><td><p>Member Work</p></td>
 <td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/scratch/[userid]</span></span></p></td>
-<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>Lustre</p></td>
 <td><p>700</p></td>
 <td><p>Yes</p></td>
 </tr>
 <tr><td><p>Project Work</p></td>
 <td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/proj-shared</span></span></p></td>
-<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>Lustre</p></td>
 <td><p>770</p></td>
 <td><p>Yes</p></td>
 </tr>
 <tr><td><p>World Work</p></td>
 <td><p><span class="docutils literal"><span class="pre">/lustre/OLCFLustre/[projid]/world-shared</span></span></p></td>
-<td><p>Lustre HPE ClusterStor</p></td>
+<td><p>Lustre</p></td>
 <td><p>775</p></td>
 <td><p>Yes</p></td>
 </tr>
@@ -1121,6 +1122,11 @@ nodes: batch  scripts, interactive, and single-command. The Slurm commands
 associated with these methods are shown in the table below and examples of
 their use can be found in the related subsections.</p>
 <table>
+<thead>
+<tr><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
 <tbody>
 <tr><td><p><span class="docutils literal">sbatch</span></p></td>
 <td><div class="line-block">
@@ -1324,9 +1330,13 @@ typically desired in the terminal window in this usage mode.</p>
 </section>
 <section id="vapor-container-guide">
 <h2><a class="toc-backref" href="#toc-entry-22" role="doc-backlink">Vapor container guide</a></h2>
-<section id="building-and-running-simple-mpi-example">
-<h3><a class="toc-backref" href="#toc-entry-23" role="doc-backlink">Building and running simple MPI example</a></h3>
-<p>simplempich.def</p>
+<p>You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
+can build containers from Apptainer defintion files or pull images from a registry like Dockerhub. simplempich.def</p>
+<section id="building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich">
+<h3><a class="toc-backref" href="#toc-entry-23" role="doc-backlink">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></h3>
+<ul>
+<li><p>Create a file named <span class="docutils literal">simplempich.def</span></p>
+<blockquote>
 <pre class="code singularity literal-block"><code><span class="keyword">Bootstrap</span>:<span class="whitespace"> </span>docker
 <span class="keyword">From</span>:<span class="whitespace"> </span>opensuse/leap:<span class="literal number">15.6</span>
 <span class="generic heading">%environment</span><span class="whitespace">
@@ -1363,9 +1373,50 @@ typically desired in the terminal window in this usage mode.</p>
 </span><span class="name builtin">cd</span><span class="whitespace"> </span>/<span class="whitespace">
 </span>curl<span class="whitespace"> </span>-o<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>tar<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>--no-same-owner<span class="whitespace">
 </span><span class="name builtin">cd</span><span class="whitespace"> </span>osu-micro-benchmarks-7.2<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>./configure<span class="whitespace"> </span><span class="name variable">CC</span><span class="operator">=</span>mpicc<span class="whitespace"> </span><span class="name variable">CXX</span><span class="operator">=</span>mpicc<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>make<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>rm<span class="whitespace"> </span>../osubenchmarks-7.2.tar.gz</code></pre>
-<p>Build container with</p>
+</blockquote>
+</li>
+<li><p>Build the container with</p>
+<blockquote>
 <pre class="code bash literal-block"><code>apptainer<span class="whitespace"> </span>build<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>simplempich.def</code></pre>
-<p>simpleintelmpi.def</p>
+</blockquote>
+</li>
+</ul>
+</section>
+<section id="building-and-running-osu-benchmarks-container-example-with-intel-and-intel-mpi">
+<h3><a class="toc-backref" href="#toc-entry-24" role="doc-backlink">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></h3>
+<p>If you want to build application in the container with the Intel Classic compiler and Intel MPI, you will need to install the appropriate version of the Intel OneAPI release, and set up several environment variables.</p>
+<ul>
+<li><p>First create the file <span class="docutils literal">intelenvs</span> with the required environment variables. This file will be copied into the container image and will be sourced every time the container is started to set up the environment variables.</p>
+<blockquote>
+<pre class="code bash literal-block"><code><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_VERSION</span><span class="operator">=</span><span class="literal number">2023</span>.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_COMPILER_TYPE</span><span class="operator">=</span>CLASSIC<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/host/linux64/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMAKE_PREFIX_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/IntelDPCPP:<span class="name variable">$CMAKE_PREFIX_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">OCL_ICD_FILENAMES</span><span class="operator">=</span>libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64/libintelocl.so<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ACL_BOARD_VENDOR_PATH</span><span class="operator">=</span>/opt/intel/OpenCLFPGA/oneAPI/Boards<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">FPGA_VARS_DIR</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMPLR_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTELFPGAOCLSDKROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DIAGUTIL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/sys_check/sys_check.sh:<span class="name variable">$DIAGUTIL_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/documentation/en/man/common:<span class="name variable">$MANPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/bin:/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/bin:<span class="name variable">$PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/include:/opt/intel/oneapi/mkl/2023.2.0/include:<span class="name variable">$CPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MKLROOT</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0<span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/bin:/opt/intel/oneapi/mkl/2023.2.0/bin/intel64:<span class="name variable">$PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INCLUDE_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/include:<span class="name variable">$INCLUDE_PATH</span><span class="whitespace">
+</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">I_MPI_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0</code></pre>
+</blockquote>
+</li>
+<li><p>Create the file <span class="docutils literal">simpleintelmpi.def</span></p>
+<blockquote>
 <pre class="code singularity literal-block"><code><span class="keyword">Bootstrap</span>:<span class="whitespace"> </span>docker
 <span class="keyword">From</span>:<span class="whitespace"> </span>opensuse/leap:<span class="literal number">15.6</span>
 <span class="whitespace">
@@ -1413,35 +1464,15 @@ EOF</span><span class="whitespace">
 </span><span class="name builtin">cd</span><span class="whitespace"> </span>/<span class="whitespace">
 </span>curl<span class="whitespace"> </span>-o<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>tar<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>--no-same-owner<span class="whitespace">
 </span><span class="name builtin">cd</span><span class="whitespace"> </span>osu-micro-benchmarks-7.2<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>./configure<span class="whitespace"> </span><span class="name variable">CC</span><span class="operator">=</span>mpiicc<span class="whitespace"> </span><span class="name variable">CXX</span><span class="operator">=</span>mpiicpc<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>make<span class="whitespace">  </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span>rm<span class="whitespace"> </span>../osubenchmarks-7.2.tar.gz</code></pre>
-<p>intelenvs file</p>
-<pre class="code bash literal-block"><code><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_VERSION</span><span class="operator">=</span><span class="literal number">2023</span>.2.0<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTEL_COMPILER_TYPE</span><span class="operator">=</span>CLASSIC<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/host/linux64/lib:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMAKE_PREFIX_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/IntelDPCPP:<span class="name variable">$CMAKE_PREFIX_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">OCL_ICD_FILENAMES</span><span class="operator">=</span>libintelocl_emu.so:libalteracl.so:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/x64/libintelocl.so<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ACL_BOARD_VENDOR_PATH</span><span class="operator">=</span>/opt/intel/OpenCLFPGA/oneAPI/Boards<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">FPGA_VARS_DIR</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CMPLR_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INTELFPGAOCLSDKROOT</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/release:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin:/opt/intel/oneapi/compiler/2023.2.0/linux/lib:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DIAGUTIL_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/sys_check/sys_check.sh:<span class="name variable">$DIAGUTIL_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/documentation/en/man/common:<span class="name variable">$MANPATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/lib/oclfpga/bin:/opt/intel/oneapi/compiler/2023.2.0/linux/bin/intel64:/opt/intel/oneapi/compiler/2023.2.0/linux/bin:<span class="name variable">$PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/lib/:/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LD_LIBRARY_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">CPATH</span><span class="operator">=</span>/opt/intel/oneapi/compiler/2023.2.0/linux/include:/opt/intel/oneapi/mkl/2023.2.0/include:<span class="name variable">$CPATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">NLSPATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/locale/%l_%t/%N:<span class="name variable">$NLSPATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LIBRARY_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/intel64:<span class="name variable">$LIBRARY_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MKLROOT</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0<span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/bin:/opt/intel/oneapi/mkl/2023.2.0/bin/intel64:<span class="name variable">$PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PKG_CONFIG_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mkl/2023.2.0/lib/pkgconfig:<span class="name variable">$PKG_CONFIG_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">INCLUDE_PATH</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0/include:<span class="name variable">$INCLUDE_PATH</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">I_MPI_ROOT</span><span class="operator">=</span>/opt/intel/oneapi/mpi/2021.10.0</code></pre>
-<p>build with</p>
+</blockquote>
+</li>
+<li><p>Build the container image with</p>
+<blockquote>
 <pre class="code bash literal-block"><code>apptainer<span class="whitespace"> </span>build<span class="whitespace"> </span>simpleintelmpi.sif<span class="whitespace"> </span>simpleintelmpi.def</code></pre>
-<p>submit_bind.sl</p>
+</blockquote>
+</li>
+<li><p>To run the container, write a job script that will bind in the host's MPI libraries into the container. For example, create the below file <span class="docutils literal">submitbind.sl</span> and submit the job with <span class="docutils literal">sbatch submitbind.sl</span>.</p>
+<blockquote>
 <pre class="code bash literal-block"><code><span class="comment hashbang">#!/bin/bash
 </span><span class="whitespace">
 </span><span class="comment single">#SBATCH -A stf007uanofn
@@ -1456,39 +1487,16 @@ EOF</span><span class="whitespace">
 
 
 </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINERENV_LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">:/usr/lib64/libibverbs::\$LD_LIBRARY_PATH&quot;</span><span class="whitespace">
-</span><span class="comment single">#export MPICH_SMP_SINGLE_COPY_MODE=NONE
-#export APPTAINER_CONTAINLIBS=&quot;/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libdrm.so.2,/lib64/libtinfo.so.6,/usr/lib64/libnl-3.so.200,/usr/lib64/librdmacm.so.1,/usr/lib64/libibverbs.so.1,/usr/lib64/libibverbs/libmlx5-rdmav34.so,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200&quot;
 </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_CONTAINLIBS</span><span class="operator">=</span><span class="literal string double">&quot;/usr/lib64/libjansson.so.4,/usr/lib64/libjson-c.so.5,/usr/lib64/libnl-3.so.200,/usr/lib64/libibverbs.so.1,/usr/lib64/libnuma.so.1,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-xfrm-3.so.200,/usr/lib64/libnl-genl-3.so.200&quot;</span><span class="whitespace">
 </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_BIND</span><span class="operator">=</span>/sw/vapor,/var/spool/slurmd,<span class="literal string interpol">${</span><span class="name variable">PWD</span><span class="literal string interpol">}</span>,/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,<span class="literal string interpol">${</span><span class="name variable">HOME</span><span class="literal string interpol">}</span><span class="whitespace">
 
 </span><span class="name builtin">set</span><span class="whitespace"> </span>-x<span class="whitespace">
 
-</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>./tmp/osu-micro-benchmarks-7.2/c/mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
 </span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
 </span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simpleintelmpi.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span></code></pre>
-<p>submit_hybrid.sl</p>
-<pre class="code bash literal-block"><code><span class="comment hashbang">#!/bin/bash
-</span><span class="whitespace">
-</span><span class="comment single">#SBATCH -A stf007uanofn
-#SBATCH -J test
-#SBATCH -N 2
-#SBATCH -o logs/subil_%j.out
-#SBATCH -t 01:00:00
-###SBATCH --ntasks-per-node=16
-</span><span class="whitespace">
-</span>module<span class="whitespace"> </span>reset<span class="whitespace">
-</span>module<span class="whitespace"> </span>load<span class="whitespace"> </span>oneapi<span class="whitespace">
-
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">APPTAINER_BIND</span><span class="operator">=</span>/sw/vapor,/var/spool/slurmd,<span class="literal string interpol">${</span><span class="name variable">PWD</span><span class="literal string interpol">}</span>,/etc/libibverbs.d,/usr/lib64/libibverbs,/usr/lib64/libnl,<span class="literal string interpol">${</span><span class="name variable">HOME</span><span class="literal string interpol">}</span><span class="whitespace">
-
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_ENV_DISPLAY</span><span class="operator">=</span><span class="literal number">1</span><span class="whitespace">
-</span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MPICH_VERSION_DISPLAY</span><span class="operator">=</span><span class="literal number">1</span><span class="whitespace">
-
-</span><span class="name builtin">set</span><span class="whitespace"> </span>-x<span class="whitespace">
-</span>srun<span class="whitespace"> </span>--ntasks-per-node<span class="operator">=</span><span class="literal number">16</span><span class="whitespace"> </span>apptainer<span class="whitespace"> </span><span class="name builtin">exec</span><span class="whitespace"> </span>--writable-tmpfs<span class="whitespace"> </span>simplempich.sif<span class="whitespace"> </span>/osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall<span class="whitespace"> </span>-m<span class="whitespace"> </span><span class="literal number">4096</span><span class="whitespace">
-
-</span><span class="comment single"># intel mpi container doesn't work with hybrid
-#srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096</span></code></pre>
+</blockquote>
+</li>
+</ul>
 </section>
 </section>
 </main>
