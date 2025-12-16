@@ -854,10 +854,22 @@ ul.auto-toc {
 </li>
 <li><p><a class="reference internal" href="#vapor-container-guide" id="toc-entry-22">Vapor container guide</a></p>
 <ul>
-<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich" id="toc-entry-23">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></p></li>
-<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-intel-and-intel-mpi" id="toc-entry-24">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></p></li>
+<li><p><a class="reference internal" href="#using-podman" id="toc-entry-23">Using Podman</a></p>
+<ul>
+<li><p><a class="reference internal" href="#setup" id="toc-entry-24">Setup</a></p></li>
+<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich" id="toc-entry-25">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="toc-entry-26">Notes</a></p></li>
 </ul>
 </li>
+<li><p><a class="reference internal" href="#using-apptainer" id="toc-entry-27">Using Apptainer</a></p>
+<ul>
+<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich-1" id="toc-entry-28">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#building-and-running-osu-benchmarks-container-example-with-intel-and-intel-mpi" id="toc-entry-29">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#contributing-to-the-docs" id="toc-entry-30">Contributing to the Docs</a></p></li>
 </ul>
 </nav>
 <section id="system-overview">
@@ -924,15 +936,19 @@ NCRC.</p>
 </section>
 <section id="logging-in-to-vapor">
 <h3><a class="toc-backref" href="#toc-entry-4" role="doc-backlink">Logging In to Vapor</a></h3>
-<p>To log in to Vapor, use your OLCF username and passcode:</p>
-<p>First ssh to hub and from there ssh to the Vapor login node.</p>
+<p>To log in to Vapor, you will need to apply for an OLCF account.</p>
+<p>If you are logging directly from your computer, first ssh to hub.ccs.ornl.gov and from there ssh to the Vapor login node login1.vapor.olcf.ornl.gov.
+When prompted for your Password, use your PASSCODE which is the PIN
+followed by the numbers on your RSA token.</p>
 <pre class="code literal-block"><code>$ ssh &lt;username&gt;&#64;hub.ccs.ornl.gov
 $ ssh &lt;username&gt;&#64;login1.vapor.olcf.ornl.gov</code></pre>
+<p>If you are logging in from a Gaea node, you can directly ssh to the Vapor login node.</p>
+<pre class="code literal-block"><code>$ ssh &lt;username&gt;&#64;login1.vapor.olcf.ornl.gov</code></pre>
 </section>
 </section>
 <section id="programming-environment">
 <h2><a class="toc-backref" href="#toc-entry-5" role="doc-backlink">Programming Environment</a></h2>
-<p>Frontier users are provided with many pre-installed software packages and scientific libraries. To facilitate this, environment management tools are used to handle necessary changes to the shell.</p>
+<p>Vapor users are provided with many pre-installed software packages and scientific libraries. To facilitate this, environment management tools are used to handle necessary changes to the shell.. Vapor is not a Cray system, so many of the packages that you might be familiar with like <span class="docutils literal"><span class="pre">cray-mpich</span></span>, <span class="docutils literal"><span class="pre">cray-hdf5</span></span> are not available. You will need to use the modules that are available. Use <span class="docutils literal">module avail</span> to see the full list of modules that are installed.</p>
 <section id="environment-modules-lmod">
 <h3><a class="toc-backref" href="#toc-entry-6" role="doc-backlink">Environment Modules (Lmod)</a></h3>
 <p>Environment modules are provided through <a class="reference external" href="https://lmod.readthedocs.io/en/latest/">Lmod</a>, a Lua-based module system for dynamically altering shell environments. By managing changes to the shell’s environment variables (such as <span class="docutils literal">PATH</span>, <span class="docutils literal">LD_LIBRARY_PATH</span>, and <span class="docutils literal">PKG_CONFIG_PATH</span>), Lmod allows you to alter the software available in your shell environment without the risk of creating package and version combinations that cannot coexist in a single environment.</p>
@@ -1330,10 +1346,88 @@ typically desired in the terminal window in this usage mode.</p>
 </section>
 <section id="vapor-container-guide">
 <h2><a class="toc-backref" href="#toc-entry-22" role="doc-backlink">Vapor container guide</a></h2>
-<p>You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
-can build containers from Apptainer defintion files or pull images from a registry like Dockerhub. simplempich.def</p>
+<section id="using-podman">
+<h3><a class="toc-backref" href="#toc-entry-23" role="doc-backlink">Using Podman</a></h3>
+<p>Podman can be used to build containers on Vapor, but containers should be converted to Apptainer's
+SIF format for running.</p>
+<section id="setup">
+<h4><a class="toc-backref" href="#toc-entry-24" role="doc-backlink">Setup</a></h4>
+<p>Create the file <span class="docutils literal"><span class="pre">~/.config/containers/storage.conf</span></span>. Replace <span class="docutils literal">&lt;username&gt;</span> with your username on
+Vapor.</p>
+<pre class="code literal-block"><code>[storage]
+driver = &quot;overlay&quot;
+graphroot = &quot;/tmp/containers/&lt;username&gt;&quot;
+runroot = &quot;/tmp/containers/&lt;username&gt;&quot;
+
+[storage.options]
+additionalimagestores = [
+]
+
+[storage.options.overlay]
+ignore_chown_errors = &quot;true&quot;
+mount_program = &quot;/sw/vapor/spack/envs/core25.08/opt/gcc-11.5.0/fuse-overlayfs-1.14-av3pdbz4tyokldfoy6w44jopf6ovco6k/bin/fuse-overlayfs&quot;
+mountopt = &quot;nodev,metacopy=on&quot;
+
+[storage.options.thinpool]</code></pre>
+</section>
 <section id="building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich">
-<h3><a class="toc-backref" href="#toc-entry-23" role="doc-backlink">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></h3>
+<h4><a class="toc-backref" href="#toc-entry-25" role="doc-backlink">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></h4>
+<ul>
+<li><p>Create a file named <span class="docutils literal">Dockerfile</span></p>
+<blockquote>
+<pre class="code docker literal-block"><code><span class="keyword">FROM</span><span class="whitespace"> </span><span class="literal string">docker.io/opensuse/leap:15.6</span><span class="whitespace">
+</span><span class="keyword">ENV</span><span class="whitespace"> </span><span class="name variable">MPICH_DIR</span><span class="operator">=</span>/opt/mpich<span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/mpich/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/mpich/lib:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name variable">MANPATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/mpich/share/man:</span><span class="name variable">$MANPATH</span><span class="literal string double">&quot;</span><span class="whitespace">
+
+</span><span class="keyword">RUN</span><span class="whitespace"> </span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing required packages...&quot;</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">DEBIAN_FRONTEND</span><span class="operator">=</span>noninteractive<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>zypper<span class="whitespace"> </span>install<span class="whitespace"> </span>-y<span class="whitespace"> </span>wget<span class="whitespace"> </span>tar<span class="whitespace"> </span>make<span class="whitespace"> </span>sudo<span class="whitespace"> </span>git<span class="whitespace"> </span>fakeroot<span class="whitespace"> </span>gzip<span class="whitespace"> </span>gcc<span class="whitespace"> </span>gcc-c++<span class="whitespace"> </span>gcc-fortran<span class="whitespace">
+    </span>#<span class="whitespace"> </span>Set<span class="whitespace"> </span>MPICH<span class="whitespace"> </span>variables<span class="whitespace">
+</span><span class="keyword">ENV</span><span class="whitespace"> </span><span class="name variable">MPICH_VERSION</span><span class="operator">=</span><span class="literal number">3</span>.4.2<span class="whitespace">
+</span><span class="keyword">ENV</span><span class="whitespace"> </span><span class="name variable">MPICH_URL</span><span class="operator">=</span><span class="literal string double">&quot;http://www.mpich.org/static/downloads/</span><span class="name variable">$MPICH_VERSION</span><span class="literal string double">/mpich-</span><span class="name variable">$MPICH_VERSION</span><span class="literal string double">.tar.gz&quot;</span><span class="whitespace">  </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name variable">MPICH_DIR</span><span class="operator">=</span>/opt/mpich<span class="whitespace">
+</span><span class="keyword">RUN</span><span class="whitespace"> </span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing MPICH...&quot;</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>mkdir<span class="whitespace"> </span>-p<span class="whitespace"> </span>/mpich<span class="whitespace"> </span>/opt<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name builtin">cd</span><span class="whitespace"> </span>/mpich<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>wget<span class="whitespace"> </span>-O<span class="whitespace"> </span>mpich-<span class="name variable">$MPICH_VERSION</span>.tar.gz<span class="whitespace"> </span><span class="name variable">$MPICH_URL</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>tar<span class="whitespace"> </span>--no-same-owner<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>mpich-<span class="name variable">$MPICH_VERSION</span>.tar.gz<span class="whitespace">
+</span><span class="keyword">RUN</span><span class="whitespace"> </span><span class="name builtin">cd</span><span class="whitespace"> </span>/mpich/mpich-<span class="name variable">$MPICH_VERSION</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>./configure<span class="whitespace"> </span>--disable-fortran<span class="whitespace"> </span>--with-device<span class="operator">=</span>ch4:ofi<span class="whitespace"> </span>--prefix<span class="operator">=</span><span class="name variable">$MPICH_DIR</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>make<span class="whitespace"> </span>install<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>rm<span class="whitespace"> </span>-rf<span class="whitespace"> </span>/mpich<span class="whitespace">
+</span><span class="keyword">RUN</span><span class="whitespace"> </span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Compiling the MPI application...&quot;</span><span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name builtin">cd</span><span class="whitespace"> </span>/<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>curl<span class="whitespace"> </span>-o<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>tar<span class="whitespace"> </span>-xzf<span class="whitespace"> </span>osubenchmarks-7.2.tar.gz<span class="whitespace"> </span>--no-same-owner<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span><span class="name builtin">cd</span><span class="whitespace"> </span>osu-micro-benchmarks-7.2<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>./configure<span class="whitespace"> </span><span class="name variable">CC</span><span class="operator">=</span>mpicc<span class="whitespace"> </span><span class="name variable">CXX</span><span class="operator">=</span>mpicc<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>make<span class="whitespace"> </span><span class="operator">&amp;&amp;</span><span class="whitespace"> </span><span class="literal string escape">\
+</span><span class="whitespace">    </span>rm<span class="whitespace"> </span>../osubenchmarks-7.2.tar.gz</code></pre>
+</blockquote>
+</li>
+<li><p>Build the image with <span class="docutils literal">podman build localhost/opensusempich:latest .</span></p></li>
+<li><p>Convert the image into a tar file <span class="docutils literal">podman save <span class="pre">-o</span> opensusempich.tar localhost/opensusempich:latest</span></p></li>
+<li><p>Build the Apptainer image from this tar file <span class="docutils literal">apptainer build opensusempich.sif <span class="pre">docker-archive://opensusempich.tar</span></span></p></li>
+</ul>
+</section>
+<section id="notes">
+<h4><a class="toc-backref" href="#toc-entry-26" role="doc-backlink">Notes</a></h4>
+<p>While building, if you run into an error like</p>
+<pre class="code literal-block"><code>write /var/tmp/buildah3667696475/layer: no space left on device on pipe close</code></pre>
+<p>then try setting <span class="docutils literal">TMPDIR</span> to some location where you know there is space before your build
+command. For example</p>
+<pre class="code shell literal-block"><code>mkdir<span class="whitespace"> </span>-P<span class="whitespace"> </span>/tmp/containers/&lt;username&gt;/tmp<span class="whitespace">
+</span><span class="name variable">TMPDIR</span><span class="operator">=</span>/tmp/containers/&lt;username&gt;/tmp<span class="whitespace"> </span>podman<span class="whitespace"> </span>build<span class="whitespace"> </span>-t<span class="whitespace"> </span>localhost/opensusempich:latest<span class="whitespace"> </span>.</code></pre>
+</section>
+</section>
+<section id="using-apptainer">
+<h3><a class="toc-backref" href="#toc-entry-27" role="doc-backlink">Using Apptainer</a></h3>
+<p>You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
+can build containers from Apptainer defintion files or pull images from a registry like Dockerhub.</p>
+<section id="building-and-running-osu-benchmarks-container-example-with-gcc-and-mpich-1">
+<h4><a class="toc-backref" href="#toc-entry-28" role="doc-backlink">Building and running OSU Benchmarks container example (with GCC and MPICH)</a></h4>
 <ul>
 <li><p>Create a file named <span class="docutils literal">simplempich.def</span></p>
 <blockquote>
@@ -1345,10 +1439,6 @@ can build containers from Apptainer defintion files or pull images from a regist
     </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
     </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;</span><span class="name variable">$MPICH_DIR</span><span class="literal string double">/lib:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
     </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">MANPATH</span><span class="operator">=</span><span class="name variable">$MPICH_DIR</span>/share/man:<span class="name variable">$MANPATH</span><span class="whitespace">
-    </span><span class="comment single"># Point to rocm locations
-</span><span class="whitespace">    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">ROCM_PATH</span><span class="operator">=</span>/opt/rocm<span class="whitespace">
-    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">LD_LIBRARY_PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/lib:/opt/rocm/lib64:</span><span class="name variable">$LD_LIBRARY_PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
-    </span><span class="name builtin">export</span><span class="whitespace"> </span><span class="name variable">PATH</span><span class="operator">=</span><span class="literal string double">&quot;/opt/rocm/bin:</span><span class="name variable">$PATH</span><span class="literal string double">&quot;</span><span class="whitespace">
 
 </span><span class="generic heading">%post</span><span class="whitespace">
 </span><span class="name builtin">echo</span><span class="whitespace"> </span><span class="literal string double">&quot;Installing required packages...&quot;</span><span class="whitespace">
@@ -1382,8 +1472,9 @@ can build containers from Apptainer defintion files or pull images from a regist
 </li>
 </ul>
 </section>
+</section>
 <section id="building-and-running-osu-benchmarks-container-example-with-intel-and-intel-mpi">
-<h3><a class="toc-backref" href="#toc-entry-24" role="doc-backlink">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></h3>
+<h3><a class="toc-backref" href="#toc-entry-29" role="doc-backlink">Building and running OSU Benchmarks container example (with Intel and Intel MPI)</a></h3>
 <p>If you want to build application in the container with the Intel Classic compiler and Intel MPI, you will need to install the appropriate version of the Intel OneAPI release, and set up several environment variables.</p>
 <ul>
 <li><p>First create the file <span class="docutils literal">intelenvs</span> with the required environment variables. This file will be copied into the container image and will be sourced every time the container is started to set up the environment variables.</p>
@@ -1498,6 +1589,11 @@ EOF</span><span class="whitespace">
 </li>
 </ul>
 </section>
+</section>
+<section id="contributing-to-the-docs">
+<h2><a class="toc-backref" href="#toc-entry-30" role="doc-backlink">Contributing to the Docs</a></h2>
+<p>If you have updates or changes or suggestions for these docs, open a pull request on the Github
+repository: <a class="reference external" href="https://github.com/olcf/vapor-docs">https://github.com/olcf/vapor-docs</a></p>
 </section>
 </main>
 </body>

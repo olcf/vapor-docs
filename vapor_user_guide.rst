@@ -56,9 +56,11 @@ The Lustre filesystem is organized into the following storage areas for project-
 Logging In to Vapor 
 --------------------
 
-To log in to Vapor, use your OLCF username and passcode:
+To log in to Vapor, you will need to apply for an OLCF account. 
 
-First ssh to hub and from there ssh to the Vapor login node.
+If you are logging directly from your computer, first ssh to hub.ccs.ornl.gov and from there ssh to the Vapor login node login1.vapor.olcf.ornl.gov. 
+When prompted for your Password, use your PASSCODE which is the PIN
+followed by the numbers on your RSA token. 
 
 
 .. code-block:: 
@@ -66,11 +68,17 @@ First ssh to hub and from there ssh to the Vapor login node.
     $ ssh <username>@hub.ccs.ornl.gov
     $ ssh <username>@login1.vapor.olcf.ornl.gov
 
+If you are logging in from a Gaea node, you can directly ssh to the Vapor login node.
+
+.. code-block:: 
+
+    $ ssh <username>@login1.vapor.olcf.ornl.gov
+
 
 Programming Environment
 =======================
 
-Frontier users are provided with many pre-installed software packages and scientific libraries. To facilitate this, environment management tools are used to handle necessary changes to the shell.
+Vapor users are provided with many pre-installed software packages and scientific libraries. To facilitate this, environment management tools are used to handle necessary changes to the shell.. Vapor is not a Cray system, so many of the packages that you might be familiar with like ``cray-mpich``, ``cray-hdf5`` are not available. You will need to use the modules that are available. Use ``module avail`` to see the full list of modules that are installed.
 
 Environment Modules (Lmod)
 --------------------------
@@ -389,12 +397,105 @@ The table below summarizes commonly-used Slurm commands:
 Vapor container guide
 =====================
 
+Using Podman
+------------
 
-You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
-can build containers from Apptainer defintion files or pull images from a registry like Dockerhub. simplempich.def
+Podman can be used to build containers on Vapor, but containers should be converted to Apptainer's
+SIF format for running. 
+
+Setup
+^^^^^
+
+Create the file ``~/.config/containers/storage.conf``. Replace ``<username>`` with your username on
+Vapor.
+
+.. code-block:: 
+
+    [storage]
+    driver = "overlay"
+    graphroot = "/tmp/containers/<username>"
+    runroot = "/tmp/containers/<username>"
+    
+    [storage.options]
+    additionalimagestores = [
+    ]
+    
+    [storage.options.overlay]
+    ignore_chown_errors = "true"
+    mount_program = "/sw/vapor/spack/envs/core25.08/opt/gcc-11.5.0/fuse-overlayfs-1.14-av3pdbz4tyokldfoy6w44jopf6ovco6k/bin/fuse-overlayfs"
+    mountopt = "nodev,metacopy=on"
+    
+    [storage.options.thinpool]
+
 
 Building and running OSU Benchmarks container example (with GCC and MPICH)
---------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Create a file named ``Dockerfile``
+
+    .. code-block:: docker
+
+        FROM docker.io/opensuse/leap:15.6
+        ENV MPICH_DIR=/opt/mpich \
+            PATH="/opt/mpich/bin:$PATH" \
+            LD_LIBRARY_PATH="/opt/mpich/lib:$LD_LIBRARY_PATH" \
+            MANPATH="/opt/mpich/share/man:$MANPATH"
+        
+        RUN echo "Installing required packages..." && \
+            export DEBIAN_FRONTEND=noninteractive && \
+            zypper install -y wget tar make sudo git fakeroot gzip gcc gcc-c++ gcc-fortran
+            # Set MPICH variables
+        ENV MPICH_VERSION=3.4.2
+        ENV MPICH_URL="http://www.mpich.org/static/downloads/$MPICH_VERSION/mpich-$MPICH_VERSION.tar.gz"  \
+            MPICH_DIR=/opt/mpich
+        RUN echo "Installing MPICH..." && \
+            mkdir -p /mpich /opt && \
+            cd /mpich && \
+            wget -O mpich-$MPICH_VERSION.tar.gz $MPICH_URL && \
+            tar --no-same-owner -xzf mpich-$MPICH_VERSION.tar.gz
+        RUN cd /mpich/mpich-$MPICH_VERSION && \
+            ./configure --disable-fortran --with-device=ch4:ofi --prefix=$MPICH_DIR && \
+            make install && \
+            rm -rf /mpich
+        RUN echo "Compiling the MPI application..." && \
+            cd / && \
+            curl -o osubenchmarks-7.2.tar.gz https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz && \
+            tar -xzf osubenchmarks-7.2.tar.gz --no-same-owner && \
+            cd osu-micro-benchmarks-7.2 && \
+            ./configure CC=mpicc CXX=mpicc && \
+            make && \
+            rm ../osubenchmarks-7.2.tar.gz
+
+
+- Build the image with ``podman build localhost/opensusempich:latest .``
+- Convert the image into a tar file ``podman save -o opensusempich.tar localhost/opensusempich:latest``
+- Build the Apptainer image from this tar file ``apptainer build opensusempich.sif docker-archive://opensusempich.tar``
+
+Notes
+^^^^^
+
+While building, if you run into an error like
+
+.. code-block::
+
+   write /var/tmp/buildah3667696475/layer: no space left on device on pipe close
+
+then try setting ``TMPDIR`` to some location where you know there is space before your build
+command. For example
+
+.. code-block:: shell
+   
+   mkdir -P /tmp/containers/<username>/tmp
+   TMPDIR=/tmp/containers/<username>/tmp podman build -t localhost/opensusempich:latest .
+
+Using Apptainer
+---------------
+
+You can also build and run containers on Vapor with Apptainer. Vapor provides Apptainer v1.4.1. You
+can build containers from Apptainer defintion files or pull images from a registry like Dockerhub. 
+
+Building and running OSU Benchmarks container example (with GCC and MPICH)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Create a file named ``simplempich.def``
 
@@ -408,10 +509,6 @@ Building and running OSU Benchmarks container example (with GCC and MPICH)
             export PATH="$MPICH_DIR/bin:$PATH"
             export LD_LIBRARY_PATH="$MPICH_DIR/lib:$LD_LIBRARY_PATH"
             export MANPATH=$MPICH_DIR/share/man:$MANPATH
-            # Point to rocm locations
-            export ROCM_PATH=/opt/rocm
-            export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/lib64:$LD_LIBRARY_PATH"
-            export PATH="/opt/rocm/bin:$PATH"
         
         %post
         echo "Installing required packages..."
@@ -564,3 +661,9 @@ If you want to build application in the container with the Intel Classic compile
         srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simplempich.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
         srun --ntasks-per-node=16 apptainer exec --writable-tmpfs simpleintelmpi.sif /osu-micro-benchmarks-7.2/c//mpi/collective/blocking/osu_alltoall -m 4096
     
+
+Contributing to the Docs
+========================
+
+If you have updates or changes or suggestions for these docs, open a pull request on the Github
+repository: https://github.com/olcf/vapor-docs 
